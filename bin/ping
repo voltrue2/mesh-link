@@ -7,11 +7,11 @@ const addr = process.argv[2];
 const port = process.argv[3];
 
 if (!addr) {
-    throw new Error('./udp_ping <address> <port>');
+    throw new Error('./bin/ping <address> <port>');
 }
 
 if (!port) {
-    throw new Error('./udp_ping <address> <port>');
+    throw new Error('./bin/ping <address> <port>');
 }
 
 const sock = dgram.createSocket('udp4');
