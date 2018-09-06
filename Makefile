@@ -6,7 +6,7 @@ help:
 .DEFAULT_GOAL := help
 
 setup: ## Set up working environment
-	ln -s ./scripts/pre-commit .git/hooks/pre-commit
+	ln -fs ../../scripts/pre-commit .git/hooks/pre-commit
 
 lint: ## Execute lint against the source code
 	./bin/lint 
