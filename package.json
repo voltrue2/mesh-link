@@ -1,6 +1,6 @@
 {
     "name": "mesh-link",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "author": "Nobuyori Takahashi",
     "description": "Mesh network for servers that allows your servers(processes) talk to each other",
     "dependencies": {
@@ -75,10 +75,10 @@
     "main": "index.js",
     "repository": {
         "type": "git",
-        "url": ""
+        "url": "https://github.com/voltrue2/mesh-link"
     },
     "bugs": {
-        "url": ""
+        "url": "https://github.com/voltrue2/mesh-link/issues"
     },
-    "homepage": ""
+    "homepage": "https://github.com/voltrue2/mesh-link"
 }
