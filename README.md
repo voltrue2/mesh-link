@@ -254,3 +254,11 @@ Returns a boolean to indicate if asked node is itself or not.
 |address |YES     |String   |IP address of the target mesh node|
 |port    |YES     |Number   |Port of the target mesh node|
 
+# How To Test For Communications
+
+You may want to test if all nodes can communicate each other before launching your application.
+
+To do that, you simply need to execute `./bin/ping <address of a mesh node> <port of a mesh node>`.
+
+If you get `PONG\n` back from the targeted mesh node, it means you can talk to that mesh node.
+
