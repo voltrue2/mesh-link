@@ -7,7 +7,8 @@
         "redis": "2.8.0"
     },
     "devDependencies": {
-        "mocha": "5.2.0"
+        "mocha": "5.2.0",
+        "eslint": "4.18.2"
     },
     "engine": "node >= 7.0.0",
     "eslintConfig": {
