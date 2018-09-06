@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+
+const lint = require('../scripts/lint');
+const pkgpath = __dirname + '/../package.json';
+lint(__dirname + '/../lib/', pkgpath, [], (error) => {
+    if (error) {
+        process.exit(1);
+    }
+});

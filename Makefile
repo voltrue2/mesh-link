@@ -5,6 +5,9 @@ help:
 ## Set default command of make to help, so that running make will output help texts
 .DEFAULT_GOAL := help
 
+setup: ## Set up working environment
+	ln -s ./scripts/pre-commit .git/hooks/pre-commit
+
 lint: ## Execute lint against the source code
 	./bin/lint 
 

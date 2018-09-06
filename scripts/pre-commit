@@ -1,0 +1,10 @@
+#!/bin/sh
+
+`echo "Lint the source code"`;
+
+`echo make lint`;
+
+`echo "Run tests"`;
+
+`echo "TODO: add tests ASAP"`;
+

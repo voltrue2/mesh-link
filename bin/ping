@@ -1,0 +1,50 @@
+#!/usr/bin/env node
+
+'use strict';
+
+const dgram = require('dgram');
+const addr = process.argv[2];
+const port = process.argv[3];
+
+if (!addr) {
+    throw new Error('./udp_ping <address> <port>');
+}
+
+if (!port) {
+    throw new Error('./udp_ping <address> <port>');
+}
+
+const sock = dgram.createSocket('udp4');
+sock.on('message', handlePong);
+sock.on('close', shutdown);
+sock.on('error', handleError);
+
+const msg = 'ping';
+
+sock.send(msg, 0, msg.length, port, addr);
+
+setTimeout(function () {
+    console.error('timeout');
+    process.exit(1);
+}, 1000);
+
+function handlePong(buf){
+    console.log(buf.toString());
+    shutdown();
+    process.exit();
+}
+
+function shutdown() {
+    try {
+        sock.close();
+    } catch (error) {
+        // do nothing
+    }
+}
+
+function handleError(error) {
+    console.error('Error:', error);
+    shutdown();
+    process.exit(1);
+}
+
