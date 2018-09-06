@@ -14,11 +14,13 @@ The module uses **redis**, but it does not depend on it to handle the communicat
 
 - The module allows to send a request message to another mesh node and require the receiver to send a response.
 
-# What You Can Use this Module For?
+# What Can I Use this Module For?
 
 You may use the module for the communication of your micro-server nodes. (Faster than HTTP).
 
 The module is also ideal for clustered real-time game servers.
+
+Of course these aren't the only ways to use this module.
 
 # How To Install
 
@@ -82,6 +84,8 @@ When you send a mesh network message to another mesh node,
 
 You must have a handler for that message in order to do **something**.
 
+Consider `handlerId` as a URI of a HTTP request.
+
 **mesh-link** manages this by allowing you to define a handling function and its unique ID (UInt16).
 
 ```javascript
@@ -111,7 +115,7 @@ mlink.send(handlerId, nodes, data, (responseData) => {
 });
 ```
 
-## How To SEt Up A Message Handler With Response
+## How To Set Up A Message Handler With Response
 
 ```javascript
 const mlink = require('mesh-link');
