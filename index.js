@@ -10,5 +10,6 @@ module.exports = {
     getNodeValue: broker.getNodeValue,
     getNodeEndPoints: broker.getNodeEndPoints,
     handler: broker.handler,
-    send: broker.send
+    send: broker.send,
+    usend: broker.usend
 };

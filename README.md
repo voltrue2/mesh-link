@@ -16,9 +16,9 @@ The module uses **redis**, but it does not depend on it to handle the communicat
 
 # What Can I Use this Module For?
 
-You may use the module for the communication of your micro-server nodes. (Faster than HTTP).
+- You may use the module to connect micro-service servers. (Faster and lighter than HTTP).
 
-The module is also ideal for clustered real-time game servers.
+- The module is also ideal for clustered real-time game servers.
 
 Of course these aren't the only ways to use this module.
 
