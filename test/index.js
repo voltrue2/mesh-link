@@ -36,6 +36,13 @@ describe('mesh-link', () => {
         }, done);
     });
 
+    it('Node "one" can send an unreliable message to node "two" and receive a response back', (done) => {
+        createClient('Uhello2two', PORT_ONE, (buf, next) => {
+            var data = JSON.parse(buf);
+            eq(data.message, 'hello world', next);
+        }, done);
+    });
+
     it('Can start node "three"', (done) => {
         startNode(THREE, PORT_THREE);
         setTimeout(done, 1000);
@@ -55,6 +62,25 @@ describe('mesh-link', () => {
         var count = 0;
         var msg = '';
         createClient('foo2all', PORT_THREE, (buf, next) => {
+            count += 1;
+            var data = JSON.parse(buf);
+            msg += '/' + data.message;
+            if (count === 4) {
+                eq(msg, '/foo bar/foo bar/foo bar/foo bar', next);
+            }
+        }, done);
+    });
+
+    it('Node "three" can send an unreliable message to all nodes and receive a response back', (done) => {
+        setTimeout(() => {
+            stopAllNodes();
+            setTimeout(() => {
+                throw new Error('Time Out...');
+            }, 100 * plist.length);
+        }, 2000);
+        var count = 0;
+        var msg = '';
+        createClient('Ufoo2all', PORT_THREE, (buf, next) => {
             count += 1;
             var data = JSON.parse(buf);
             msg += '/' + data.message;

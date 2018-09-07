@@ -69,7 +69,7 @@ function onMessage(buf, remote) {
                 var err2 = Buffer.from('node "two" not found');
                 server.send(err2, 0, err2.length, remote.port, remote.address);
             }
-            break;
+        break;
         case 'foo2all':
             var nodes = mlink.getNodeEndPoints();
             if (!nodes.length) {
@@ -85,7 +85,42 @@ function onMessage(buf, remote) {
                 }
                 var buf2 = Buffer.from(JSON.stringify(res));
                 server.send(buf2, 0, buf2.length, remote.port, remote.address);
-            }); 
+            });
+        break;
+        case 'Uhello2two':
+            var node = getNodeByName('two');
+            if (node) {
+                mlink.send(1, [ node ], { message: 'hello', from: NAME }, (error, res) => {
+                    if (error) {
+                        var err = Buffer.from(error.message);
+                        server.send(err, 0, err.length, remote.port, remote.address);
+                        return;
+                    }
+                    var buf2 = Buffer.from(JSON.stringify(res));
+                    server.send(buf2, 0, buf2.length, remote.port, remote.address);
+                });
+            } else {
+                var err2 = Buffer.from('node "two" not found');
+                server.send(err2, 0, err2.length, remote.port, remote.address);
+            }
+        break;
+        case 'Ufoo2all':
+            var nodes = mlink.getNodeEndPoints();
+            if (!nodes.length) {
+                var err2 = Buffer.from('nodes not found');
+                server.send(err2, 0, err2.length, remote.port, remote.address);
+                return;
+            }
+            mlink.send(2, nodes, { message: 'foo', addr: remote.address, port: remote.port }, (error, res) => {
+                if (error) {
+                    var err = Buffer.from(error.message);
+                    server.send(err, 0, err.length, remote.port, remote.address);
+                    return;
+                }
+                var buf2 = Buffer.from(JSON.stringify(res));
+                server.send(buf2, 0, buf2.length, remote.port, remote.address);
+            });
+        break;
     }
 }
 

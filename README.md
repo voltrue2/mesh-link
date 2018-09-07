@@ -184,17 +184,22 @@ If `callback` is given, it is understood to require a response back.
 |data           |YES     |Object   |Message as an object to be sent|
 |callback       |NO      |Function |Provid the callback function if you require a response back|
 
-## usend(handlerId, nodes, data)
+## usend(handlerId, nodes, data, callback)
 
 Sends an unreliable mesh network message with a handler ID to one or more mesh network nodes.
 
 This is a plain UDP message and the message may be lost due to the nature of UDP protocol.
+
+The advantage of using this method is message size is much smaller than that of `send()` and less UDP packets required.
+
+**NOTE** Callback response message may also be lost.
 
 |Argument       |Required|Data Type|Explanation   |
 |:--------------|:------:|:--------|:-------------|
 |handlerId      |YES     |Number   |Unique ID of a handler (Max 0xffff)|
 |nodes          |YES     |Array    |An array of mesh nodes' address and port to send the message to|
 |data           |YES     |Object   |Message as an object to be sent|
+|callback       |NO      |Function |Provid the callback function if you require a response back|
 
 ## onUpdate(handler)
 
