@@ -34,7 +34,7 @@ function onListening() {
         var buf = Buffer.from(JSON.stringify(res));
         server.send(buf, 0, buf.length, data.port, data.addr);
     });
-    mlink.start({ relayLimit: 1, logger: { enable: true } })
+    mlink.start({ prefix: '__test__', relayLimit: 1, logger: { enable: true } })
         .then(() => {
             // ready
             console.log('server "' + NAME + '" at port', PORT, 'ready');
