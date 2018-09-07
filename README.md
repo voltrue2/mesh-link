@@ -2,6 +2,8 @@
 
 ©Nobuyori Takahashi < <voltrue2@yahoo.com> >
 
+[![Build Status](https://travis-ci.org/voltrue2/mesh-link.svg?branch=develop)](https://travis-ci.org/voltrue2/mesh-link)
+
 Mesh Link is a server-side mesh network module that allows your processes to talk to each other remotely (within your private network **ONLY**).
 
 The module uses **redis**, but it does not depend on it to handle the communications between server processes.
