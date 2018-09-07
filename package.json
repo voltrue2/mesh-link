@@ -10,6 +10,9 @@
         "mocha": "5.2.0",
         "eslint": "4.18.2"
     },
+    "scripts": {
+        "test": "make test"
+    },
     "engine": "node >= 7.0.0",
     "eslintConfig": {
         "parserOptions": {
