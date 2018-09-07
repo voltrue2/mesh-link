@@ -11,3 +11,8 @@ setup: ## Set up working environment
 lint: ## Execute lint against the source code
 	./bin/lint 
 
+.PHONY: test
+test: ## Exevute unit tests
+	./bin/lint || exit 1
+	./node_modules/mocha/bin/mocha test/index.js --exit -s 10 -R spec -b --timeout 10000 
+

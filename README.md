@@ -184,6 +184,18 @@ If `callback` is given, it is understood to require a response back.
 |data           |YES     |Object   |Message as an object to be sent|
 |callback       |NO      |Function |Provid the callback function if you require a response back|
 
+## usend(handlerId, nodes, data)
+
+Sends an unreliable mesh network message with a handler ID to one or more mesh network nodes.
+
+This is a plain UDP message and the message may be lost due to the nature of UDP protocol.
+
+|Argument       |Required|Data Type|Explanation   |
+|:--------------|:------:|:--------|:-------------|
+|handlerId      |YES     |Number   |Unique ID of a handler (Max 0xffff)|
+|nodes          |YES     |Array    |An array of mesh nodes' address and port to send the message to|
+|data           |YES     |Object   |Message as an object to be sent|
+
 ## onUpdate(handler)
 
 `handler` is called before the mesh network node updates its sate to Redis.
