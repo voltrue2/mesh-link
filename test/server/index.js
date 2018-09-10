@@ -46,7 +46,8 @@ function onListening() {
         });
 }
 
-function onError() {
+function onError(error) {
+    console.error(NAME, PORT, 'failed to start:', error);
     process.exit(1);
 }
 

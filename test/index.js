@@ -30,14 +30,14 @@ describe('mesh-link', () => {
     });
 
     it('Node "one" can send a message to node "two" and receive a response back', (done) => {
-        createClient('hello2two', PORT_ONE, (buf, next) => {
+        runClient('hello2two', PORT_ONE, (buf, next) => {
             var data = JSON.parse(buf);
             eq(data.message, 'hello world', next);
         }, done);
     });
 
     it('Node "one" can send an unreliable message to node "two" and receive a response back', (done) => {
-        createClient('Uhello2two', PORT_ONE, (buf, next) => {
+        runClient('Uhello2two', PORT_ONE, (buf, next) => {
             var data = JSON.parse(buf);
             eq(data.message, 'hello world', next);
         }, done);
@@ -61,7 +61,7 @@ describe('mesh-link', () => {
         }, 2000);
         var count = 0;
         var msg = '';
-        createClient('foo2all', PORT_THREE, (buf, next) => {
+        runClient('foo2all', PORT_THREE, (buf, next) => {
             count += 1;
             var data = JSON.parse(buf);
             msg += '/' + data.message;
@@ -80,7 +80,7 @@ describe('mesh-link', () => {
         }, 2000);
         var count = 0;
         var msg = '';
-        createClient('Ufoo2all', PORT_THREE, (buf, next) => {
+        runClient('Ufoo2all', PORT_THREE, (buf, next) => {
             count += 1;
             var data = JSON.parse(buf);
             msg += '/' + data.message;
@@ -111,7 +111,7 @@ function eq(expected, actual, cb) {
     }
 }
 
-function createClient(cmd, port, test, done) {
+function runClient(cmd, port, test, done) {
     var client = dgram.createSocket('udp4');
     client.on('listening', () => {
         console.log('Client is ready - sending a command:', cmd, port);
@@ -142,18 +142,19 @@ function startNode(name, port) {
     var params = { detached: true, stdio: [ 0, 'pipe', 'pipe' ] };
     var p = spawn(path, cmd, params);
     p.stdout.on('data', (data) => {
-        console.log(data.toString());
+        process.stdout.write('> ' + data.toString());
     });
     p.stderr.on('data', (error) => {
-        console.error('error:', error.toString());
+        process.stderr.write('error: ' + error.toString());
     });
-    p.on('close', () => {
-        console.log('node stopped', name, port);
+    p.on('close', (code) => {
+        console.log('$ node stopped', name, port, 'code:', code);
     });
     plist.push(p);
 }
 
 function stopAllNodes() {
+    console.log('stop all nodes...');
     for (var i = 0, len = plist.length; i < len; i++) {
         stopNode(plist[i]);
     }
