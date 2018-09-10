@@ -11,6 +11,10 @@ const server = dgram.createSocket('udp4');
 
 var ready = false;
 
+mlink.onLogging((level, args) => {
+    console.log.apply(console, args);
+});
+
 server.on('listening', onListening);
 server.on('error', onError);
 server.on('message', onMessage);
@@ -34,7 +38,14 @@ function onListening() {
         var buf = Buffer.from(JSON.stringify(res));
         server.send(buf, 0, buf.length, data.port, data.addr);
     });
-    mlink.start({ prefix: '__test__', relayLimit: 1, logger: { enable: true } })
+    var conf = {
+        address: '127.0.0.1',
+        port: 4000,
+        prifx: '__test__',
+        relayLimit: 1,
+        logger: { enable: true }
+    };
+    mlink.start(conf)
         .then(() => {
             // ready
             console.log('server "' + NAME + '" at port', PORT, 'ready');

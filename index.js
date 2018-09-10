@@ -1,5 +1,6 @@
 'use strict';
 const broker = require('./lib/broker');
+const logger = require('./lib/logger');
 module.exports = {
     start: broker.start,
     stop: broker.stop,
@@ -11,5 +12,6 @@ module.exports = {
     getNodeEndPoints: broker.getNodeEndPoints,
     handler: broker.handler,
     send: broker.send,
-    usend: broker.usend
+    usend: broker.usend,
+    onLogging: logger.onLogging
 };
