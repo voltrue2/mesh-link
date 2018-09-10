@@ -7,9 +7,9 @@ const ONE = 'one';
 const TWO = 'two';
 const THREE = 'three';
 const ADDR = '127.0.0.1';
-const PORT_CLIENT = 7200;
-const PORT_ONE = 7100;
-const PORT_TWO = 7101;
+const PORT_CLIENT = 4200;
+const PORT_ONE = 4100;
+const PORT_TWO = 4101;
 const PORT_THREE = 7102;
 const plist = [];
 
