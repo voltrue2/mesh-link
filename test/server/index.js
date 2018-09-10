@@ -38,6 +38,11 @@ function onListening() {
         var buf = Buffer.from(JSON.stringify(res));
         server.send(buf, 0, buf.length, data.port, data.addr);
     });
+    // responseTimeout
+    mlink.handler(3, () => {
+        // do nothing intentionally...
+    });
+    // set up mesh-link
     var conf = {
         address: '127.0.0.1',
         port: 4000,
@@ -132,6 +137,22 @@ function onMessage(buf, remote) {
                 var buf2 = Buffer.from(JSON.stringify(res));
                 server.send(buf2, 0, buf2.length, remote.port, remote.address);
             });
+        case 'responseTimeout':
+            var node3 = getNodeByName('three');
+            if (node3) {
+                mlink.send(3, [ node3 ], { message: 'hello', from: NAME }, (error, res) => {
+                    if (error) {
+                        var err = Buffer.from(error.message);
+                        server.send(err, 0, err.length, remote.port, remote.address);
+                        return;
+                    }
+                    var buf2 = Buffer.from(JSON.stringify(res));
+                    server.send(buf2, 0, buf2.length, remote.port, remote.address);
+                });
+            } else {
+                var err3 = Buffer.from('node "three" not found');
+                server.send(err3, 0, err3.length, remote.port, remote.address);
+            }
         break;
     }
 }
