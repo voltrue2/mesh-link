@@ -140,7 +140,7 @@ function startNode(name, port) {
     var path = process.execPath;
     var cmd = [ NODE_PATH, name, port ];
     var params = { detached: true, stdio: [ 0, 'pipe', 'pipe' ] };
-    var p = spawn(path, cmd, );
+    var p = spawn(path, cmd, params);
     p.stdout.on('data', (data) => {
         console.log(data.toString());
     });
