@@ -137,7 +137,10 @@ function createClient(cmd, port, test, done) {
 }
 
 function startNode(name, port) {
-    var p = spawn(process.execPath, [ NODE_PATH, name, port ]);
+    var path = process.execPath;
+    var cmd = [ NODE_PATH, name, port ];
+    var params = { detached: true, stdio: [ 0, 'pipe', 'pipe' ] };
+    var p = spawn(path, cmd, );
     p.stdout.on('data', (data) => {
         console.log(data.toString());
     });
