@@ -44,6 +44,7 @@ function onListening() {
     });
     // set up mesh-link
     var conf = {
+        nic: 'eth0',
         address: '127.0.0.1',
         port: 4000,
         prifx: '__test__',

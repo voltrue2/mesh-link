@@ -63,7 +63,8 @@ mlink.start(configs)
 |redis.port|YES     |`6379`                                 |Port of Redis                                                                            |
 |relayLimit|NO      |`10`                                   |When sending a message to multiple mesh node, it sends the message `relayLimit` at a time|
 |prefix    |NO      |`''`                                   |A custom prefix for the keys stored in Redis                                             |
-|address   |NO      |Dynamically obtained private IP address|IP address to bind                                                                       |
+|nic       |NO      |`'eth0'`                               |Specify which network interface to use to dynamically obtain the IP address to bind to   |
+|address   |NO      |Dynamically obtained private IP address|IP address to bind. It uses `eth0` by default. To change this, you must set `nic` to something else|
 |port      |NO      |`8100`                                 |Port range to bind. If it is 8100, then it will bind and increment                       |
 
 ## How To Send A Mesh Network Message
