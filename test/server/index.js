@@ -47,7 +47,7 @@ function onListening() {
         nic: 'eth0',
         address: '127.0.0.1',
         port: 4000,
-        prifx: '__test__',
+        prefix: '__test__',
         relayLimit: 1,
         logger: { enable: true }
     };
