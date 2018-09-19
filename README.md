@@ -134,7 +134,7 @@ function message200Handler(data, callback) {
 
 # Shared Objects
 
-A shared object is an object that can be shared and mutated from all mesh nodes asynchronously, and the object remains synchronize across all mesh nodes.
+A shared object is an object that can be shared and mutated from all mesh nodes asynchronously, and the object remains synchronized across all mesh nodes.
 
 Example:
 
