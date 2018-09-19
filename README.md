@@ -132,6 +132,77 @@ function message200Handler(data, callback) {
 }
 ```
 
+# Shared Objects
+
+A shared object is an object that can be shared and mutated from all mesh nodes asynchronously, and the object remains synchronize across all mesh nodes.
+
+Example:
+
+Mesh Node 1: Create a new shared object and store it on mesh node 2
+
+```javascript
+const mlink = require('mesh-link');
+var objectProperties = {
+    counter: { value: 0, min: 0, max: 100 },
+    name: { value: 'Foobar' }
+};
+// this shared object will disapeare if there is nothing changes in 60 seconds
+var ttl = 60000;
+var nodeToStore = { address: '...', port: 8100 };
+// this will create the shared object locally and sync it to the targeted node
+var so = mlink.sharedObject.create(objectProperties, ttl, nodeToStore);
+// add an event listener to be triggered when something happens to this shared object
+so.on('update', (me, propertyName, propertyValue) => {
+    // do something...
+});
+// make sure you have a cleaning function on remove event
+so.on('remove', () => {
+    // clean this object reference to avoid memory leak
+    so = null;
+});
+// this change is automatically synced to all mesh nodes that has this shared object
+// increment count by 10
+so.inc('count', 10);
+// mid is used to identify each shared object
+var sendMidToNode2 = so.mid;
+```
+
+Mesh Node 2: Obtain the shared object that created on mesh node 1
+
+```javascript
+const mlink = require('mesh-link');
+// you must share mid of the shared object you want to get access to
+mlink.sharedObject.get(mid, (error, so) => {
+    if (error) {
+        // error...
+    }
+    // now he have the same shared object here on mesh node 2
+    // make sure you have a cleaning function on remove event
+    so.on('remove', () => {
+        // clean this object reference to avoid memory leak
+        so = null;
+    });
+    // this is automatically synced to both mesh node 1 and the node and other nodes that have this shared object!
+    so.inc('count', -3);
+});
+```
+
+Mesh Node 3: Remove a shared object across all mesh nodes
+
+**IMPORTANT** You must have an event listner for `remove` event in order to perform cleaning to avoid memory leak by leaving the references behind
+
+```javascript
+const mlink = require('mesh-link');
+// make sure this reference has the listener to destory the reference on remove
+so.on('remove', () => {
+    // destory the object reference
+    so = null;
+});
+// pass the shared object to remove
+// this will automatically propagate to all mesh nodes
+mlink.shared.Object.remove(so);
+```
+
 # Methods
 
 **mesh-link** has plethora of functions to help you build your application using mesh network!
@@ -166,6 +237,8 @@ Returns the IP address and port number that this mesh network node uses as an ob
 Defines a handler function for the give handler ID.
 
 All messages with the same handler ID will trigger this handler function.
+
+**IMPORTANT** The range of valid handler ID is from 0 to 65000.
 
 |Argument       |Required|Data Type|Explanation   |
 |:--------------|:------:|:--------|:-------------|

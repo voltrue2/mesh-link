@@ -42,8 +42,42 @@ function onListening() {
     mlink.handler(3, () => {
         // do nothing intentionally...
     });
+    // createSO
+    mlink.handler(4, (data, cb) => {
+        var mid = data.mid;
+        mlink.sharedObject.get(mid, (error, so) => {
+            if (error) {
+                return cb(error);
+            }
+            cb({ count: so.get('count') });
+        });
+    });
+    // upateSO
+    mlink.handler(5, (data, cb) => {
+        var mid = data.mid;
+        mlink.sharedObject.get(mid, (error, so) => {
+            if (error) {
+                return cb(error);
+            }
+            so.inc('count', 1);
+            so.inc('count', -1);
+            so.inc('count', 1);
+            so.inc('count', 1);
+            so.inc('count', -1);
+            so.inc('count', 1);
+            so.inc('count', -1);
+            so.inc('count', 1);
+            so.inc('count', -1);
+            cb({ count: so.get('count') });
+        });
+    });
+    // noSO
+    mlink.handler(6, (nothing, cb) => {
+        cb({ num: mlink.sharedObject.getNumOfSharedObjects() });
+    });
     // set up mesh-link
     var conf = {
+        cleanInterval: 1000,
         nic: 'eth0',
         address: '127.0.0.1',
         port: 4000,
@@ -147,14 +181,117 @@ function onMessage(buf, remote) {
                         server.send(err, 0, err.length, remote.port, remote.address);
                         return;
                     }
-                    var buf2 = Buffer.from(JSON.stringify(res));
-                    server.send(buf2, 0, buf2.length, remote.port, remote.address);
+                    var buf3 = Buffer.from(JSON.stringify(res));
+                    server.send(buf3, 0, buf3.length, remote.port, remote.address);
                 });
             } else {
                 var err3 = Buffer.from('node "three" not found');
                 server.send(err3, 0, err3.length, remote.port, remote.address);
             }
         break;
+        case 'createSO':
+            var node = getNodeByName('one');
+            if (node) {
+                var first = mlink.sharedObject.create({
+                    count: { value: 0, max: 3, min: 0 },
+                    name: { value: 'first' },
+                    map: { value: {} }
+                }, 1000, node);
+                first.inc('count', 1);
+                setTimeout(() => {
+                    mlink.send(4, [ node ], { mid: first.mid }, (error, res) => {
+                        if (error) {
+                            var err = Buffer.from(error.message);
+                            server.send(err, 0, err.length, remote.port, remote.address);
+                            return;
+                        }
+                        var buf3 = Buffer.from(JSON.stringify([ first.get('count'), res.count ]));
+                        server.send(buf3, 0, buf3.length, remote.port, remote.address);
+                    });
+                }, 100);
+            } else {
+                var err4 = Buffer.from('node "one" not found');
+                server.send(err4, 0, err4.length, remote.port, remote.address);
+            }
+        break; 
+        case 'updateSO':
+            var node = getNodeByName('one');
+            if (node) {
+                var second = mlink.sharedObject.create({
+                    count: { value: 0, max: 20, min: 0 },
+                    name: { value: 'first' },
+                    map: { value: {} }
+                }, 1000, node);
+                second.inc('count', 1);
+                second.inc('count', 1);
+                second.inc('count', -1);
+                second.inc('count', 1);
+                second.inc('count', 1);
+                second.inc('count', -1);
+                second.inc('count', -1);
+                second.inc('count', 1);
+                second.inc('count', -1);
+                setTimeout(() => {
+                    second.inc('count', 1);
+                    second.inc('count', -1);
+                    second.inc('count', 1);
+                    second.inc('count', -1);
+                    second.inc('count', -1);
+                    second.inc('count', 1);
+                    second.inc('count', -1);
+                    second.inc('count', -1);
+                    second.inc('count', -1);
+                    second.inc('count', 1);
+                    var node2 = getNodeByName('three');
+                    mlink.send(5, [ node2 ], { mid: second.mid }, (error, res) => {
+                        if (error) {
+                            var err = Buffer.from(error.message);
+                            server.send(err, 0, err.length, remote.port, remote.address);
+                            return;
+                        }
+                        setTimeout(() => {
+                            mlink.send(4, [ node ], { mid: second.mid }, (error, res2) => {
+                                var buf4 = Buffer.from(JSON.stringify([ second.get('count'), res.count, res2.count ]));
+                                server.send(buf4, 0, buf4.length, remote.port, remote.address);
+                            });
+                        }, 100);
+                    });
+                }, 10);
+            } else {
+                var err4 = Buffer.from('node "one" not found');
+                server.send(err4, 0, err4.length, remote.port, remote.address);
+            }
+        break;
+        case 'noSO':
+            setTimeout(() => {
+                var node = getNodeByName('one');
+                mlink.send(6, [ node ], {}, (error, res) => {
+                    if (error) {
+                        var err = Buffer.from(error.message);
+                        server.send(err, 0, err.length, remote.port, remote.address);
+                        return;
+                    }
+                    node = getNodeByName('two');
+                    mlink.send(6, node, {}, (error, res2) => {
+                        if (error) {
+                            var err = Buffer.from(error.message);
+                            server.send(err, 0, err.length, remote.port, remote.address);
+                            return;
+                        }
+                        node = getNodeByName('three');
+                        mlink.send(6, node, {}, (error, res3) => {
+                            if (error) {
+                                var err = Buffer.from(error.message);
+                                server.send(err, 0, err.length, remote.port, remote.address);
+                                return;
+                            }
+                            var buf = Buffer.from(JSON.stringify([ res.num, res2.num, res3.num ]));
+                            server.send(buf, 0, buf.length, remote.port, remote.address);
+                        }); 
+                    });
+                });
+            }, 2000);
+        break;      
     }
 }
 

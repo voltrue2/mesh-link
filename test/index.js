@@ -58,6 +58,41 @@ describe('mesh-link', () => {
         }, done);
     });
 
+    it('Node "two" can create a shared object and see that local and remote are completely in sync', (done) => {
+        runClient('createSO', PORT_TWO, (buf, next) => {
+            var list = JSON.parse(buf);
+            var two = list[0];
+            var one = list[1];
+            eq(two, one, next);
+        }, done);
+    });
+
+    it('Node "two" can create and update shared object locally and from another node and see that it is in sync', (done) => {
+        runClient('updateSO', PORT_TWO, (buf, next) => {
+            var list = JSON.parse(buf);
+            var two = list[0];
+            var one = list[1];
+            var three = list[2];
+            eq(two, one, () => {
+                eq(one, three, next);
+            });
+        }, done);
+    });
+
+    it('All nodes have no more shared objects b/c they have expired', (done) => {
+        runClient('noSO', PORT_TWO, (buf, next) => {
+            var list = JSON.parse(buf);
+            var two = list[0];
+            var one = list[1];
+            var three = list[2];
+            eq(two, 0, () => {
+                eq(two, one, () => {
+                    eq(one, three, next);
+                });
+            });
+        }, done);
+    });
+
     it('Node "three" can send a message to all nodes and receive a response back', (done) => {
         setTimeout(() => {
             stopAllNodes();
