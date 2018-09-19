@@ -6,6 +6,7 @@ const mlink = require('../../');
 const NAME = process.argv[2];
 const PORT = process.argv[3];
 const ADDR = '127.0.0.1';
+const SO_TTL = 5000;
 
 const server = dgram.createSocket('udp4');
 
@@ -196,7 +197,7 @@ function onMessage(buf, remote) {
                     count: { value: 0, max: 3, min: 0 },
                     name: { value: 'first' },
                     map: { value: {} }
-                }, 1000, node);
+                }, SO_TTL, node);
                 first.inc('count', 1);
                 setTimeout(() => {
                     mlink.send(4, [ node ], { mid: first.mid }, (error, res) => {
@@ -221,7 +222,7 @@ function onMessage(buf, remote) {
                     count: { value: 0, max: 20, min: 0 },
                     name: { value: 'first' },
                     map: { value: {} }
-                }, 1000, node);
+                }, SO_TTL, node);
                 second.inc('count', 1);
                 second.inc('count', 1);
                 second.inc('count', -1);
@@ -290,7 +291,7 @@ function onMessage(buf, remote) {
                         }); 
                     });
                 });
-            }, 2000);
+            }, SO_TTL);
         break;      
     }
 }
