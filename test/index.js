@@ -79,6 +79,10 @@ describe('mesh-link', () => {
         }, done);
     });
 
+    it('Can wait for 5 seconds', (done) => {
+        setTimeout(done, 5000);
+    });
+
     it('All nodes have no more shared objects b/c they have expired', (done) => {
         runClient('noSO', PORT_TWO, (buf, next) => {
             var list = JSON.parse(buf);
