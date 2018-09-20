@@ -136,6 +136,8 @@ function message200Handler(data, callback) {
 
 A shared object is an object that can be shared and mutated from all mesh nodes asynchronously, and the object remains synchronized across all mesh nodes.
 
+More details on Shared Object is (HERE)[#so]
+
 Example:
 
 Mesh Node 1: Create a new shared object and store it on mesh node 2
@@ -355,6 +357,7 @@ Returns a boolean to indicate if asked node is itself or not.
 |address |YES     |String   |IP address of the target mesh node|
 |port    |YES     |Number   |Port of the target mesh node|
 
+<a name="so"></a>
 ## sharedObject.create(properties, ttl, node)
 
 Creates a shared object with the given properties.
