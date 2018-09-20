@@ -177,20 +177,21 @@ Mesh Node 2: Obtain the shared object that created on mesh node 1
 ```javascript
 const mlink = require('mesh-link');
 // you must share mid of the shared object you want to get access to
-mlink.sharedObject.get(mid, (error, so) => {
-    if (error) {
+mlink.sharedObject.get(mid)
+    .then((so) => {
+        // now he have the same shared object here on mesh node 2
+        // make sure you have a cleaning function on remove event
+        so.on('remove', () => {
+            // clean this object reference to avoid memory leak
+            so = null;
+        });
+        // this is automatically synced to both mesh node 1 and the node and other nodes that have this shared object!
+        so.inc('counter', -3);
+        so.del('members', 'memberId-1');
+    })
+    .catch((error) => {
         // error...
-    }
-    // now he have the same shared object here on mesh node 2
-    // make sure you have a cleaning function on remove event
-    so.on('remove', () => {
-        // clean this object reference to avoid memory leak
-        so = null;
     });
-    // this is automatically synced to both mesh node 1 and the node and other nodes that have this shared object!
-    so.inc('counter', -3);
-    so.del('members', 'memberId-1');
-});
 ```
 
 Mesh Node 3: Remove a shared object across all mesh nodes
