@@ -70,11 +70,18 @@ describe('mesh-link', () => {
     it('Node "two" can create and update shared object locally and from another node and see that it is in sync', (done) => {
         runClient('updateSO', PORT_TWO, (buf, next) => {
             var list = JSON.parse(buf);
-            var two = list[0];
-            var one = list[1];
-            var three = list[2];
-            eq(two, one, () => {
-                eq(one, three, next);
+            var ctwo = list[0];
+            var cone = list[1];
+            var cthree = list[2];
+            var mtwo = JSON.stringify(list[3]);
+            var mone = JSON.stringify(list[4]);
+            var mthree = JSON.stringify(list[5]);
+            eq(ctwo, cone, () => {
+                eq(cone, cthree, () => {
+                    eq(mtwo, mone, () => {
+                        eq(mone, mthree, next);
+                    });
+                });
             });
         }, done);
     });

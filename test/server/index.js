@@ -50,7 +50,10 @@ function onListening() {
             if (error) {
                 return cb(error);
             }
-            cb({ count: so.get('count') });
+            cb({
+                count: so.get('count'),
+                map: so.get('map')
+            });
         });
     });
     // upateSO
@@ -64,12 +67,17 @@ function onListening() {
             so.inc('count', -1);
             so.inc('count', 1);
             so.inc('count', 1);
+            so.add('map', 'three', 3);
             so.inc('count', -1);
             so.inc('count', 1);
             so.inc('count', -1);
+            so.remove('map', 'two');
             so.inc('count', 1);
             so.inc('count', -1);
-            cb({ count: so.get('count') });
+            cb({
+                count: so.get('count'),
+                map: so.get('map')
+            });
         });
     });
     // noSO
@@ -223,6 +231,8 @@ function onMessage(buf, remote) {
                     name: { value: 'first' },
                     map: { value: {} }
                 }, SO_TTL, node);
+                second.add('map', 'one', 1);
+                second.add('map', 'two', 2);
                 second.inc('count', 1);
                 second.inc('count', 1);
                 second.inc('count', -1);
@@ -239,10 +249,12 @@ function onMessage(buf, remote) {
                     second.inc('count', -1);
                     second.inc('count', -1);
                     second.inc('count', 1);
+                    second.del('map', 'one');
                     second.inc('count', -1);
                     second.inc('count', -1);
                     second.inc('count', -1);
                     second.inc('count', 1);
+                    second.add('map', 'four', 4);
                     var node2 = getNodeByName('three');
                     mlink.send(5, [ node2 ], { mid: second.mid }, (error, res) => {
                         if (error) {
@@ -252,7 +264,10 @@ function onMessage(buf, remote) {
                         }
                         setTimeout(() => {
                             mlink.send(4, [ node ], { mid: second.mid }, (error, res2) => {
-                                var buf4 = Buffer.from(JSON.stringify([ second.get('count'), res.count, res2.count ]));
+                                var buf4 = Buffer.from(JSON.stringify([
+                                    second.get('count'), res.count, res2.count,
+                                    second.get('map'), res.map, res2.map
+                                ]));
                                 server.send(buf4, 0, buf4.length, remote.port, remote.address);
                             });
                         }, 100);

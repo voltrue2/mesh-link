@@ -144,7 +144,8 @@ Mesh Node 1: Create a new shared object and store it on mesh node 2
 const mlink = require('mesh-link');
 var objectProperties = {
     counter: { value: 0, min: 0, max: 100 },
-    name: { value: 'Foobar' }
+    name: { value: 'Foobar' },
+    members: { value: {} }
 };
 // this shared object will disapeare if there is nothing changes in 60 seconds
 var ttl = 60000;
@@ -162,7 +163,9 @@ so.on('remove', () => {
 });
 // this change is automatically synced to all mesh nodes that has this shared object
 // increment count by 10
-so.inc('count', 10);
+so.inc('counter', 10);
+// add a new item to the map
+so.add('members', 'memberId-1', {name:'Bob'});
 // mid is used to identify each shared object
 var sendMidToNode2 = so.mid;
 ```
@@ -183,7 +186,8 @@ mlink.sharedObject.get(mid, (error, so) => {
         so = null;
     });
     // this is automatically synced to both mesh node 1 and the node and other nodes that have this shared object!
-    so.inc('count', -3);
+    so.inc('counter', -3);
+    so.del('members', 'memberId-1');
 });
 ```
 
@@ -350,6 +354,92 @@ Returns a boolean to indicate if asked node is itself or not.
 |:-------|:------:|:--------|:-------------|
 |address |YES     |String   |IP address of the target mesh node|
 |port    |YES     |Number   |Port of the target mesh node|
+
+## sharedObject.create(properties, ttl, node)
+
+Creates a shared object with the given properties.
+
+It returns an instance of the shared object created.
+
+|Argument  |Required|Data Type|Explanation                    |
+|:---------|:------:|:--------|:------------------------------|
+|properties|YES     |Object   |Properties of the shared object|
+|ttl       |NO      |Number   |Optional TTL of the shared object in milliseconds. Default is 300000ms (5 minutes)|
+|node      |YES     |Object   |The mesh node address and port to store the shared object: { address, port }|
+
+**Properties Format**
+
+The properties of a shared object is defined as:
+
+```
+{
+    <property name>: {
+        value: <initial value>,
+        min: <if the value is a number>,
+        max: <if the value is a number>
+    }
+    {...}
+}
+```
+
+## sharedObject.remove(sharedObject)
+
+Deletes the given shared object across all mesh nodes.
+
+|Argument    |Required|Data Type|Explanation                                |
+|:-----------|:------:|:--------|:------------------------------------------|
+|sharedObject|YES     |Object   |The instance of shared object to be deleted|
+
+## sharedObject.get(mid, callback)
+
+Retrieves a shared object specified by `mid` (managed ID) from the mesh node that it lives and caches it locally.
+
+|Argument  |Required|Data Type|Explanation                                        |
+|:---------|:------:|:--------|:--------------------------------------------------|
+|mid       |YES     |String   |Managed ID of the shared object: `sharedObject.mid`|
+|callback  |NO      |Function |Returns with an error or a shared object           |
+
+## Instance of Shared Object
+
+An instance of shared object has methods and properties.
+
+## .mid
+
+This is the unique ID of this particular shared object.
+
+## .get(propertyName)
+
+Returns the value of a property specified by `propertyName`.
+
+## inc(propertyName, value)
+
+If the targeted property is a number, it performs increment by the given `value`.
+
+## set(propertyName, value)
+
+It replaces the value of the targeted property.
+
+## add(propertyName, key, value)
+
+If the targeted property is a map, it adds a new key with a value to the map property.
+
+## del(propertyName, key)
+
+If the targeted property is a map, it remves the key and its value from the map property.
+
+## Evevnts
+
+An instance of shared object also has some events you can listen to.
+
+## update
+
+Update event is triggered whenever the shared object's property is changed.
+
+## remove
+
+Remove event is triggered whenever the shared object is deleted from its source and internal cache.
+
+Make sure to clean up all references that you might have when you get this event to avid memory leaks.
 
 # How To Test For Communications
 
