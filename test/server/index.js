@@ -46,15 +46,11 @@ function onListening() {
     // createSO
     mlink.handler(4, (data, cb) => {
         var mid = data.mid;
-        mlink.sharedObject.get(mid, (error, so) => {
-            if (error) {
-                return cb(error);
-            }
-            cb({
-                count: so.get('count'),
-                map: so.get('map')
-            });
-        });
+        mlink.sharedObject.get(mid)
+            .then((so) => {
+                cb({ count: so.get('count'), map: so.get('map') });
+            })
+            .catch(cb);
     });
     // upateSO
     mlink.handler(5, (data, cb) => {

@@ -394,10 +394,12 @@ Deletes the given shared object across all mesh nodes.
 
 Retrieves a shared object specified by `mid` (managed ID) from the mesh node that it lives and caches it locally.
 
+If returns Promise.
+
 |Argument  |Required|Data Type|Explanation                                        |
 |:---------|:------:|:--------|:--------------------------------------------------|
 |mid       |YES     |String   |Managed ID of the shared object: `sharedObject.mid`|
-|callback  |NO      |Function |Returns with an error or a shared object           |
+|callback  |NO      |Function |Returns with an error or a shared object. If you use Promise, you do not need the callback|
 
 ## Instance of Shared Object
 
