@@ -417,21 +417,81 @@ This is the unique ID of this particular shared object.
 
 Returns the value of a property specified by `propertyName`.
 
-## inc(propertyName, value)
+## Promise .inc(propertyName, value, callback)
 
 If the targeted property is a number, it performs increment by the given `value`.
 
-## set(propertyName, value)
+If you want to make sure, the change has been successful, you can either pass a callback or use a promise.
+
+Below is the example using Promise:
+
+```javascipt
+// this is a shared object
+bunny.inc('stamina', 3)
+    .then(() => {
+        // increment was successul
+    })
+    .catch((error) => {
+        // increment rejected
+    });
+```
+
+## Promise .set(propertyName, value, callback)
 
 It replaces the value of the targeted property.
 
-## add(propertyName, key, value)
+If you want to make sure, the change has been successful, you can either pass a callback or use a promise.
+
+Below is the example using Promise:
+
+```javascipt
+// this is a shared object
+bunny.set('name', 'Peter')
+    .then(() => {
+        // set was successul
+    })
+    .catch((error) => {
+        // set rejected
+    });
+```
+
+## Promise .add(propertyName, key, value, callback)
 
 If the targeted property is a map, it adds a new key with a value to the map property.
 
-## del(propertyName, key)
+If you want to make sure, the change has been successful, you can either pass a callback or use a promise.
+
+Below is the example using Promise:
+
+```javascipt
+// this is a shared object
+swimmingClub.add('members', 'memberId-100', { name: 'Bod', age: 40 })
+    .then(() => {
+        // add was successul
+    })
+    .catch((error) => {
+        // add rejected
+    });
+```
+
+## del(propertyName, key, callback)
 
 If the targeted property is a map, it remves the key and its value from the map property.
+
+If you want to make sure, the change has been successful, you can either pass a callback or use a promise.
+
+Below is the example using Promise:
+
+```javascipt
+// this is a shared object
+swimmingClub.del('members', 'memberId-100')
+    .then(() => {
+        // delete was successul
+    })
+    .catch((error) => {
+        // delete rejected
+    });
+```
 
 ## Evevnts
 

@@ -202,8 +202,11 @@ function onMessage(buf, remote) {
                     name: { value: 'first' },
                     map: { value: {} }
                 }, SO_TTL, node);
-                first.inc('count', 1);
-                setTimeout(() => {
+                first.inc('count', 1, (error) => {
+                        if (error) {
+                            var buf5 = Buffer.from(JSON.stringify([ first.get('count'), res.count ]));
+                            server.send(buf5, 0, buf5.length, remote.port, remote.address);
+                        }
                     mlink.send(4, [ node ], { mid: first.mid }, (error, res) => {
                         if (error) {
                             var err = Buffer.from(error.message);
@@ -213,7 +216,7 @@ function onMessage(buf, remote) {
                         var buf3 = Buffer.from(JSON.stringify([ first.get('count'), res.count ]));
                         server.send(buf3, 0, buf3.length, remote.port, remote.address);
                     });
-                }, 100);
+                });
             } else {
                 var err4 = Buffer.from('node "one" not found');
                 server.send(err4, 0, err4.length, remote.port, remote.address);
@@ -250,24 +253,30 @@ function onMessage(buf, remote) {
                     second.inc('count', -1);
                     second.inc('count', -1);
                     second.inc('count', 1);
-                    second.add('map', 'four', 4);
-                    var node2 = getNodeByName('three');
-                    mlink.send(5, [ node2 ], { mid: second.mid }, (error, res) => {
-                        if (error) {
-                            var err = Buffer.from(error.message);
-                            server.send(err, 0, err.length, remote.port, remote.address);
-                            return;
-                        }
-                        setTimeout(() => {
-                            mlink.send(4, [ node ], { mid: second.mid }, (error, res2) => {
-                                var buf4 = Buffer.from(JSON.stringify([
-                                    second.get('count'), res.count, res2.count,
-                                    second.get('map'), res.map, res2.map
-                                ]));
-                                server.send(buf4, 0, buf4.length, remote.port, remote.address);
+                    second.add('map', 'four', 4)
+                        .then(() => {
+                            var node2 = getNodeByName('three');
+                            mlink.send(5, [ node2 ], { mid: second.mid }, (error, res) => {
+                                if (error) {
+                                    var err = Buffer.from(error.message + '\n' + error.stack);
+                                    server.send(err, 0, err.length, remote.port, remote.address);
+                                    return;
+                                }
+                                setTimeout(() => {
+                                    mlink.send(4, [ node ], { mid: second.mid }, (error, res2) => {
+                                        var buf4 = Buffer.from(JSON.stringify([
+                                            second.get('count'), res.count, res2.count,
+                                            second.get('map'), res.map, res2.map
+                                        ]));
+                                        server.send(buf4, 0, buf4.length, remote.port, remote.address);
+                                    });
+                                }, 100);
                             });
-                        }, 100);
-                    });
+                        })
+                        .catch((error) => {
+                            var err = Buffer.from(error.message + '\n' + error.stack);
+                            server.send(err, 0, err.length, remote.port, remote.address);
+                        });
                 }, 10);
             } else {
                 var err4 = Buffer.from('node "one" not found');
