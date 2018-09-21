@@ -319,7 +319,7 @@ function onMessage(buf, remote) {
                     });
                 });
             }, SO_TTL);
-        break;      
+        break;
     }
 }
 
