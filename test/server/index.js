@@ -59,20 +59,27 @@ function onListening() {
             if (error) {
                 return cb(error);
             }
-            so.inc('count', 1);
-            so.inc('count', -1);
-            so.inc('count', 1);
-            so.inc('count', 1);
-            so.add('map', 'three', 3);
-            so.inc('count', -1);
-            so.inc('count', 1);
-            so.inc('count', -1);
-            so.remove('map', 'two');
-            so.inc('count', 1);
-            so.inc('count', -1);
-            cb({
-                count: so.get('count'),
-                map: so.get('map')
+            so.multi([
+                so.inc('count', 1),
+                so.inc('count', -1),
+                so.inc('count', 1),
+                so.inc('count', 1),
+                so.add('map', 'three', 3),
+                so.inc('count', -1),
+                so.inc('count', 1),
+                so.inc('count', -1),
+                so.del('map', 'two'),
+                so.inc('count', 1),
+                so.inc('count', -1)
+            ])
+            .then(() => {
+                cb({
+                    count: so.get('count'),
+                    map: so.get('map')
+                });
+            })
+            .catch((error) => {
+                cb(error);
             });
         });
     });
