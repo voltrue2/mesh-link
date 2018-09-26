@@ -54,7 +54,7 @@ describe('mesh-link', () => {
 
     it('Node "two" can send a message to node "three", but response times out', (done) => {
         runClient('responseTimeout', PORT_TWO, (buf, next) => {
-            eq(buf.toString(), 'Response timed out - handler ID: 3', next);
+            eq(buf.toString(), 'Reliable message response timed out - handler ID: 3', next);
         }, done);
     });
 
