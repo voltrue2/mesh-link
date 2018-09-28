@@ -105,7 +105,7 @@ describe('mesh-link', () => {
     });
 
     it('Node "three" can send a message to all nodes and receive a response back', (done) => {
-        setTimeout(() => {
+        var timeout = setTimeout(() => {
             stopAllNodes();
             setTimeout(() => {
                 throw new Error('Time Out...');
@@ -120,11 +120,12 @@ describe('mesh-link', () => {
             if (count === 4) {
                 eq(msg, '/foo bar/foo bar/foo bar/foo bar', next);
             }
+            clearTimeout(timeout);
         }, done);
     });
 
     it('Node "three" can send an unreliable message to all nodes and receive a response back', (done) => {
-        setTimeout(() => {
+        var timeout = setTimeout(() => {
             stopAllNodes();
             setTimeout(() => {
                 throw new Error('Time Out...');
@@ -139,6 +140,22 @@ describe('mesh-link', () => {
             if (count === 4) {
                 eq(msg, '/foo bar/foo bar/foo bar/foo bar', next);
             }
+            clearTimeout(timeout);
+        }, done);
+    });
+
+    it('Node "three" can send a relay message to all nodes including a defect node, but all nodes receives the message', (done) => {
+        var timeout = setTimeout(() => {
+            stopAllNodes();
+            setTimeout(() => {
+                throw new Error('Time Out...');
+            }, 100 * plist.length);
+        }, 5000);
+        runClient('relayWithOneDefectNode', PORT_THREE, (buf, next) => {
+            var msg = buf.toString();
+            var expected = JSON.stringify([ 'GOOD', 'GOOD', 'GOOD' ]);
+            eq(msg, expected, next);
+            clearTimeout(timeout);
         }, done);
     });
 

@@ -7,6 +7,7 @@ const NAME = process.argv[2];
 const PORT = process.argv[3];
 const ADDR = '127.0.0.1';
 const SO_TTL = 5000;
+const BAD_PORT = 9999;
 
 const server = dgram.createSocket('udp4');
 
@@ -95,8 +96,19 @@ function onListening() {
         port: 4000,
         prefix: '__test__',
         relayLimit: 1,
+        retryTimeout: 50,
+        timeout: 500,
         logger: { enable: true }
     };
+    // relayWithOneDefectNode
+    var remember;
+    mlink.handler(7, (data) => {
+        remember = data;
+    });
+    // relayWithOneDefectNode
+    mlink.handler(8, (nothing, cb) => {
+        cb(remember);
+    });
     mlink.start(conf)
         .then(() => {
             // ready
@@ -319,6 +331,44 @@ function onMessage(buf, remote) {
                     });
                 });
             }, SO_TTL);
+        break;
+        case 'relayWithOneDefectNode':
+            var nodes = [
+                { address: ADDR, port: BAD_PORT },
+                getNodeByName('one'),
+                getNodeByName('two'),
+                getNodeByName('three')
+            ];
+            mlink.send(7, nodes, { message: 'GOOD' });
+            setTimeout(() => {
+                var messages = [];
+                mlink.send(8, nodes[1], {}, (error, res) => {
+                    if (error) {
+                        var err = Buffer.from(error.message);
+                        server.send(err, 0, err.length, remote.port, remote.address);
+                        return;
+                    }
+                    messages.push(res.message);
+                    mlink.send(8, nodes[2], {}, (error, res) => {
+                        if (error) {
+                            var err = Buffer.from(error.message);
+                            server.send(err, 0, err.length, remote.port, remote.address);
+                            return;
+                        }
+                        messages.push(res.message);
+                        mlink.send(8, nodes[3], {}, (error, res) => {
+                            if (error) {
+                                var err = Buffer.from(error.message);
+                                server.send(err, 0, err.length, remote.port, remote.address);
+                                return;
+                            }
+                            messages.push(res.message);
+                            var buf = Buffer.from(JSON.stringify(messages));
+                            server.send(buf, 0, buf.length, remote.port, remote.address); 
+                        });
+                    });
+                });
+            }, 3000);
         break;
     }
 }
