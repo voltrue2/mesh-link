@@ -149,7 +149,7 @@ var objectProperties = {
     name: { value: 'Foobar' },
     members: { value: {} }
 };
-// this shared object will disapeare if there is nothing changes in 60 seconds
+// this shared object will disapeare if there is no change in 60 seconds
 var ttl = 60000;
 var nodeToStore = { address: '...', port: 8100 };
 // this will create the shared object locally and sync it to the targeted node
@@ -408,6 +408,8 @@ If returns Promise.
 ## Instance of Shared Object
 
 An instance of shared object has methods and properties.
+
+Currently the properties support the following data types: `Number` and `Map`.
 
 ## .mid
 
