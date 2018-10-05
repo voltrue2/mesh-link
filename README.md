@@ -398,7 +398,7 @@ Deletes the given shared object across all mesh nodes.
 
 Retrieves a shared object specified by `mid` (managed ID) from the mesh node that it lives and caches it locally.
 
-If returns Promise.
+It returns Promise.
 
 |Argument  |Required|Data Type|Explanation                                        |
 |:---------|:------:|:--------|:--------------------------------------------------|
