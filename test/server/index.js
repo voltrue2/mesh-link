@@ -96,8 +96,8 @@ function onListening() {
         port: 4000,
         prefix: '__test__',
         relayLimit: 1,
-        retryTimeout: 50,
-        timeout: 500,
+        retryTimeout: 100,
+        timeout: 10000,
         logger: { enable: true }
     };
     // relayWithOneDefectNode
