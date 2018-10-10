@@ -191,15 +191,24 @@ function runClient(cmd, port, test, done) {
         throw error;
     });
     client.on('message', (buf) => {
-        test(buf, () => {
-            try {
-                client.close();
-            } catch (err) {
-                // oh well...
-            }
-            console.log('Client stopped');
-            done();
-        });
+        try {
+            test(buf, () => {
+                try {
+                    client.close();
+                } catch (err) {
+                    // oh well...
+                }
+                console.log('Client stopped');
+                done();
+            });
+        } catch (error) {
+            client.close();
+            console.log('Client stopped with an error:', error);
+            stopAllNodes();
+            setTimeout(() => {
+                process.exit(1);
+            }, 100 * plist.length);
+        }
     });
     client.bind({
         port: PORT_CLIENT,
