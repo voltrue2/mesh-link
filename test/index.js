@@ -31,7 +31,12 @@ describe('mesh-link', () => {
 
     it('Node "one" can send a message to node "two" and receive a response back', (done) => {
         runClient('hello2two', PORT_ONE, (buf, next) => {
-            var data = JSON.parse(buf);
+            try {
+                var data = JSON.parse(buf);
+            } catch (error) {
+                console.error('Invalid JSON....', buf.toString());
+                throw error;
+            }
             eq(data.message, 'hello world', next);
         }, done);
     });
