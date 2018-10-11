@@ -57,12 +57,6 @@ describe('mesh-link', () => {
         setTimeout(done, 2000);
     });
 
-    it('Node "two" can send a message to node "three", but response times out', (done) => {
-        runClient('responseTimeout', PORT_TWO, (buf, next) => {
-            eq(buf.toString(), 'Reliable message response timed out - handler ID: 3', next);
-        }, done);
-    });
-
     it('Node "two" can create a shared object and see that local and remote are completely in sync', (done) => {
         runClient('createSO', PORT_TWO, (buf, next) => {
             var list = JSON.parse(buf);
@@ -161,6 +155,12 @@ describe('mesh-link', () => {
             var expected = JSON.stringify([ 'GOOD', 'GOOD', 'GOOD' ]);
             eq(msg, expected, next);
             clearTimeout(timeout);
+        }, done);
+    });
+
+    it('Node "two" can send a message to node "three", but response times out', (done) => {
+        runClient('responseTimeout', PORT_TWO, (buf, next) => {
+            eq(buf.toString(), 'Reliable message response timed out - handler ID: 3 - destination: 127.0.0.1 4002', next);
         }, done);
     });
 

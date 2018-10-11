@@ -196,6 +196,7 @@ function onMessage(buf, remote) {
                 var buf2 = Buffer.from(JSON.stringify(res));
                 server.send(buf2, 0, buf2.length, remote.port, remote.address);
             });
+        break;
         case 'responseTimeout':
             var node3 = getNodeByName('three');
             if (node3) {
