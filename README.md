@@ -304,6 +304,8 @@ A copy of other nodes' states including its own state, is passed to `handler` as
 
 ## setValue(name, value)
 
+**IMPORTANT** The value must **NOT** contain `"`"`.
+
 It can set any value to be shared with other mesh network nodes.
 
 |Argument|Required|Data Type|Explanation   |
