@@ -2,11 +2,14 @@
 
 const mlink = require('../index');
 
-mlink.start();
+mlink.start({
+    updateInterval: 2000
+});
 
-setTimeout(stayAlive, 10000);
+setTimeout(stayAlive, 1000);
 
 function stayAlive() {
-    setTimeout(stayAlive, 10000);
+    console.log(mlink.getNodeEndPoints().length);
+    setTimeout(stayAlive, 1000);
 }
 

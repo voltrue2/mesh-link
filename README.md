@@ -43,7 +43,8 @@ var configs = {
         host: '127.0.0.1',
         port: 6379
     },
-    relayLimit: 10,
+    relayLimit: 1,
+    relayDelay: 0,
     prefix: 'myapp'
 };
 mlink.start(configs)
@@ -62,6 +63,7 @@ mlink.start(configs)
 |redis.host|YES     |`'127.0.0.1'`                          |Host name of Redis                                                                       |
 |redis.port|YES     |`6379`                                 |Port of Redis                                                                            |
 |relayLimit|NO      |`1`                                    |When sending a message to multiple mesh node, it sends the message `relayLimit` at a time|
+|relayDelay|NO      |`0`                                    |Delays relay message by X milliseconds                                                   |
 |prefix    |NO      |`''`                                   |A custom prefix for the keys stored in Redis                                             |
 |nic       |NO      |`'eth0'`                               |Specify which network interface to use to dynamically obtain the IP address to bind to   |
 |address   |NO      |Dynamically obtained private IP address|IP address to bind. It uses `eth0` by default. To change this, you must set `nic` to something else|
