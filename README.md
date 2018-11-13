@@ -78,7 +78,7 @@ var data = { message: 'Hello World!' };
 // mesh nodes to send the message to
 var nodes = [
     { address: '0.0.0.0', port: 8100 },
-    { address: '0.0.0.0', port: 8101 }    
+    { address: '0.0.0.0', port: 8101 }
 ];
 mlink.send(handlerId, nodes, data);
 ```
