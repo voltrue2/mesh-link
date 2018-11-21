@@ -15,6 +15,30 @@ const plist = [];
 
 describe('mesh-link', () => {
 
+    it('Can get back up candidate mesh nodes', () => {
+        var backup = require('../lib/backup');
+        backup.setup();
+        var me = { address: '127.0.0.1' };
+        var nodes = [
+            { address: '198.21.1.64' },
+            { address: '255.255.255.255' },
+            { address: '127.0.0.1' },
+            { address: '192.44.1.56' },
+            { address: '0.0.0.0' },
+            { address: '192.44.1.55' },
+            { address: '198.21.1.65' },
+            { address: '192.44.1.53' },
+            { address: '198.21.1.61' }
+        ];
+        var res = backup.get(me, nodes);
+        for (var i = 0, len = res.length; i < len; i++) {
+            assert.notEqual(me.address, res[i].address);
+        }
+        assert.equal(res[0].address, nodes[4].address);
+        assert.equal(res[1].address, nodes[8].address);
+        assert.equal(res[2].address, nodes[0].address);
+    });
+
     it('Can start node "one"', (done) => {
         startNode(ONE, PORT_ONE);
         setTimeout(done, 1000);

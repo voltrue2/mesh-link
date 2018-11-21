@@ -68,6 +68,7 @@ mlink.start(configs)
 |nic       |NO      |`'eth0'`                               |Specify which network interface to use to dynamically obtain the IP address to bind to   |
 |address   |NO      |Dynamically obtained private IP address|IP address to bind. It uses `eth0` by default. To change this, you must set `nic` to something else|
 |port      |NO      |`8100`                                 |Port range to bind. If it is 8100, then it will bind and increment                       |
+|backups   |NO      |`3`                                    |Number of other mesh nodes to be used as potential backup (you need to write your own backup logic)|
 
 ## How To Send A Mesh Network Message
 
@@ -346,7 +347,7 @@ Returns all mesh nodes' address and port as an array.
 
 ## nodeExists(address, port)
 
-Returns a boolean to indicate if asked mesh node exists or not
+Returns a boolean to indicate if asked mesh node exists or not.
 
 |Argument|Required|Data Type|Explanation   |
 |:-------|:------:|:--------|:-------------|
@@ -361,6 +362,12 @@ Returns a boolean to indicate if asked node is itself or not.
 |:-------|:------:|:--------|:-------------|
 |address |YES     |String   |IP address of the target mesh node|
 |port    |YES     |Number   |Port of the target mesh node|
+
+## getBackupNodes()
+
+Returns an array of other mesh nodes to be used as backup memory storage.
+
+The library does **NOT** handle backup at all. You must write your own logic for backing up things in memory.
 
 <a name="so"></a>
 ## sharedObject.create(properties, ttl, node)
