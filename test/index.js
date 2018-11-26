@@ -17,7 +17,7 @@ describe('mesh-link', () => {
 
     it('Can get back up candidate mesh nodes', () => {
         var backup = require('../lib/backup');
-        backup.setup();
+        backup.setup({ backups: 3 });
         var me = { address: '127.0.0.1' };
         var nodes = [
             { address: '198.21.1.64' },
@@ -30,7 +30,8 @@ describe('mesh-link', () => {
             { address: '192.44.1.53' },
             { address: '198.21.1.61' }
         ];
-        var res = backup.get(me, nodes);
+        backup.update(me, nodes);
+        var res = backup.get();
         for (var i = 0, len = res.length; i < len; i++) {
             assert.notEqual(me.address, res[i].address);
         }
