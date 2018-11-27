@@ -12,6 +12,9 @@ const BAD_PORT = 9999;
 const server = dgram.createSocket('udp4');
 
 var ready = false;
+var remember;
+var thingToSave;
+var cachedNodes = {};
 
 mlink.onLogging((level, args) => {
     console.log.apply(console, args);
@@ -101,13 +104,30 @@ function onListening() {
         logger: { enable: true }
     };
     // relayWithOneDefectNode
-    var remember;
     mlink.handler(7, (data) => {
         remember = data;
     });
     // relayWithOneDefectNode
     mlink.handler(8, (nothing, cb) => {
         cb(remember);
+    });
+    // saveOnBackupNodes
+    mlink.handler(9, (_thingToSave, cb) => {
+        thingToSave = _thingToSave;
+        var backups = mlink.getBackupNodes();
+        console.log('----> Save on backups also:', thingToSave, backups);
+        mlink.send(10, backups, thingToSave);
+        cb();
+    });
+    // saveOnBackupNodes
+    mlink.handler(10, (_thingToSave) => {
+        thingToSave = _thingToSave;
+        console.log('----> Backup save:', thingToSave, mlink.info());
+    });
+    // getThingFromBackup
+    mlink.handler(11, (nothing, cb) => {
+        console.log('----> Get from backup', thingToSave, mlink.info());
+        cb({ thing: thingToSave, info: mlink.info() });
     });
     mlink.start(conf)
         .then(() => {
@@ -241,7 +261,7 @@ function onMessage(buf, remote) {
                 var err4 = Buffer.from('node "one" not found');
                 server.send(err4, 0, err4.length, remote.port, remote.address);
             }
-        break; 
+        break;
         case 'updateSO':
             var node = getNodeByName('one');
             if (node) {
@@ -365,20 +385,56 @@ function onMessage(buf, remote) {
                             }
                             messages.push(res.message);
                             var buf = Buffer.from(JSON.stringify(messages));
-                            server.send(buf, 0, buf.length, remote.port, remote.address); 
+                            server.send(buf, 0, buf.length, remote.port, remote.address);
                         });
                     });
                 });
             }, 3000);
         break;
+        case 'saveOnBackupNodes':
+            var node = getNodeByName('one');
+            var messageToSave = 'I have a dream';
+            mlink.send(9, [ node ], { message: messageToSave });
+            setTimeout(() => {
+                var buf = Buffer.from(messageToSave);
+                server.send(buf, 0, buf.length, remote.port, remote.address);
+            }, 3000);
+        break;
+        case 'pauseAnnouncementOfOne':
+            mlink._pauseAnnouncement();
+            setTimeout(() => {
+                var buf = Buffer.from(JSON.stringify({
+                    message: 'AnnouncementPaused',
+                }));
+                server.send(buf, 0, buf.length, remote.port, remote.address);
+            }, 3000);
+        break;
+        case 'getThingFromBackup':
+            var node = getNodeByName('one');
+            mlink.send(11, [ node ], {}, (error, res) => {
+                if (error) {
+                    var err = Buffer.from(error.message);
+                    server.send(err, 0, err.length, remote.port, remote.address);
+                    return;
+                }
+                var buf = Buffer.from(JSON.stringify(res));
+                server.send(buf, 0, buf.length, remote.port, remote.address);
+            });
+        break;
     }
 }
 
 function getNodeByName(name) {
+    // we intentionally use cache here so that we can run tests on mesh nodes
+    // that are no longer available and such...
+    if (cachedNodes[name]) {
+        return cachedNodes[name];
+    }
     var nodes = mlink.getNodeEndPoints();
     for (var i = 0, len = nodes.length; i < len; i++) {
         var value = mlink.getNodeValue(nodes[i].address, nodes[i].port, 'name');
         if (value === name) {
+            cachedNodes[name] = nodes[i];
             return nodes[i];
         }
     }

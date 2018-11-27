@@ -363,11 +363,11 @@ Returns a boolean to indicate if asked node is itself or not.
 |address |YES     |String   |IP address of the target mesh node|
 |port    |YES     |Number   |Port of the target mesh node|
 
-## getBackupNodes()
+## getBackupNodes(address, port)
 
-Returns an array of other mesh nodes to be used as backup memory storage.
+Returns back up mesh nodes as an array of the given mesh node address and port.
 
-The library does **NOT** handle backup at all. You must write your own logic for backing up things in memory.
+If no address and port are given, it returns the back up mesh nodes array of its own.
 
 <a name="so"></a>
 ## sharedObject.create(properties, ttl, node)

@@ -11,9 +11,12 @@ module.exports = {
     setValue: broker.setValue,
     getNodeValue: broker.getNodeValue,
     getNodeEndPoints: broker.getNodeEndPoints,
+    getBackupNodes: broker.getBackupNodes,
     handler: broker.handler,
     send: broker.send,
     usend: broker.usend,
     sharedObject: so,
-    onLogging: logger.onLogging
+    onLogging: logger.onLogging,
+    // used ONLY for tests
+    _pauseAnnouncement: broker._pauseAnnouncement
 };

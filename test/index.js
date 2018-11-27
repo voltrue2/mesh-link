@@ -16,28 +16,31 @@ const plist = [];
 describe('mesh-link', () => {
 
     it('Can get back up candidate mesh nodes', () => {
+        var me = { address: '127.0.0.1', port: 1234 };
         var backup = require('../lib/backup');
-        backup.setup({ backups: 3 });
-        var me = { address: '127.0.0.1' };
+        backup.setup({ backups: 3 }, me);
         var nodes = [
-            { address: '198.21.1.64' },
-            { address: '255.255.255.255' },
-            { address: '127.0.0.1' },
-            { address: '192.44.1.56' },
-            { address: '0.0.0.0' },
-            { address: '192.44.1.55' },
-            { address: '198.21.1.65' },
-            { address: '192.44.1.53' },
-            { address: '198.21.1.61' }
+            { address: '198.21.1.64', port: 5678 },
+            { address: '255.255.255.255', port: 9012 },
+            { address: '127.0.0.1', port: 3456 },
+            { address: '192.44.1.56', port: 7890 },
+            { address: '0.0.0.0', port: 1234 },
+            { address: '192.44.1.55', port: 5678 },
+            { address: '198.21.1.65', port: 9012 },
+            { address: '192.44.1.53', prt: 3456 },
+            { address: '198.21.1.61', port: 7890 }
         ];
-        backup.update(me, nodes);
-        var res = backup.get();
-        for (var i = 0, len = res.length; i < len; i++) {
-            assert.notEqual(me.address, res[i].address);
+        for (var k = 0, ken = nodes.length; k < ken; k++) {
+            nodes[k].sortKey = backup.addrToNum(nodes[k].address);
         }
-        assert.equal(res[0].address, nodes[4].address);
-        assert.equal(res[1].address, nodes[8].address);
-        assert.equal(res[2].address, nodes[0].address);
+        backup.update(nodes);
+        var res = backup.get(me);
+        for (var i = 0, len = res.length; i < len; i++) {
+            assert.notEqual(me.address + me.port, res[i].address + res[i].port);
+        }
+        assert.equal(res[0].address + res[0].port, nodes[2].address + nodes[2].port);
+        assert.equal(res[1].address + res[1].port, nodes[4].address + nodes[4].port);
+        assert.equal(res[2].address + res[2].port, nodes[8].address + nodes[8].port);
     });
 
     it('Can start node "one"', (done) => {
@@ -189,9 +192,56 @@ describe('mesh-link', () => {
         }, done);
     });
 
+    it('Node "one" can save data on its backup nodes', (done) => {
+        runClient('saveOnBackupNodes', PORT_TWO, (buf, next) => {
+            var msg = buf.toString();
+            eq(msg, 'I have a dream', next);
+        }, done);
+    });
+
+    it('Node "one" can pause announcement to remove itself from the available mesh node list', (done) => {
+        runClient('pauseAnnouncementOfOne', PORT_ONE, (buf, next) => {
+            var res = JSON.parse(buf);
+            eq(res.message, 'AnnouncementPaused', next);
+        }, done);
+    });
+
+    it('One of the backups of node "one" can return the saved data', (done) => {
+        runClient('getThingFromBackup', PORT_TWO, (buf, next) => {
+            var res = JSON.parse(buf);
+            eq(res.thing.message, 'I have a dream', next);
+        }, done);
+    });
+
     it('Can stop all nodes', (done) => {
         stopAllNodes();
         setTimeout(done, 100 * plist.length);
+    });
+
+    it('Can run performance test on backup', () => {
+        var me = { address: '127.0.0.1', port: 1234 };
+        var backup = require('../lib/backup');
+        backup.setup({ backups: 3 }, me);
+        var nodes = [ me ];
+        var total = 300;
+        for (var i = 0; i < total; i++) {
+            nodes.push({ sortKey: backup.addrToNum(i + '.0.0.0'), address: i + '.0.0.0', port: i +1000 });
+        }
+        backup.update(nodes);
+        var start = Date.now();
+        var res;
+        var loop = 100000;
+        for (var j = 0; j < loop; j++) {
+            res = backup.get(me);
+        }
+        var time = Date.now() - start;
+        console.log('Calculating backups over', total, 'mesh nodes', loop, 'times took', time + 'ms');
+        for (var i = 0, len = res.length; i < len; i++) {
+            assert.notEqual(me.address, res[i].address);
+        }
+        assert.equal(res[0].address, nodes[129].address);
+        assert.equal(res[1].address, nodes[128].address);
+        assert.equal(res[2].address, nodes[130].address);
     });
 
 });
