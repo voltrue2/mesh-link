@@ -93,6 +93,9 @@ function onListening() {
     });
     // set up mesh-link
     var conf = {
+        backups: {
+            TypeTest: 3,
+        },
         cleanInterval: 1000,
         nic: 'eth0',
         address: '127.0.0.1',
@@ -129,6 +132,7 @@ function onListening() {
         console.log('----> Get from backup', thingToSave, mlink.info());
         cb({ thing: thingToSave, info: mlink.info() });
     });
+    mlink.setType('TypeTest');
     mlink.start(conf)
         .then(() => {
             // ready
@@ -411,7 +415,7 @@ function onMessage(buf, remote) {
         break;
         case 'getThingFromBackup':
             var node = getNodeByName('one');
-            mlink.send(11, [ node ], {}, (error, res) => {
+            mlink.send(11, mlink.prepareNodes(mlink.getType(), node), {}, (error, res) => {
                 if (error) {
                     var err = Buffer.from(error.message);
                     server.send(err, 0, err.length, remote.port, remote.address);

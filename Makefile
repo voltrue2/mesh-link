@@ -14,5 +14,5 @@ lint: ## Execute lint against the source code
 .PHONY: test
 test: ## Exevute unit tests
 	./bin/lint || exit 1
-	./node_modules/mocha/bin/mocha test/index.js --exit -s 10 -R spec -b --timeout 10000 
+	./node_modules/mocha/bin/mocha test/index.js --exit -s 10 -R spec -b --timeout 11000 
 

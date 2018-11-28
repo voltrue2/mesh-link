@@ -68,7 +68,7 @@ mlink.start(configs)
 |nic       |NO      |`'eth0'`                               |Specify which network interface to use to dynamically obtain the IP address to bind to   |
 |address   |NO      |Dynamically obtained private IP address|IP address to bind. It uses `eth0` by default. To change this, you must set `nic` to something else|
 |port      |NO      |`8100`                                 |Port range to bind. If it is 8100, then it will bind and increment                       |
-|backups   |NO      |`3`                                    |Number of other mesh nodes to be used as potential backup (you need to write your own backup logic)|
+|backups   |NO      |                                       |A map by node types to indicate each node type's number of other mesh nodes to be used as potential backup (you need to write your own backup logic)|
 
 ## How To Send A Mesh Network Message
 
@@ -217,6 +217,21 @@ mlink.shared.Object.remove(so);
 
 **mesh-link** has plethora of functions to help you build your application using mesh network!
 
+## setType(nodeType)
+
+It sets the mesh node type of your choice.
+
+It **MUST** be called before `.start()`
+
+```javascript
+mlink.setType('MyCustomNodeType');
+mlink.start();
+```
+
+## getType()
+
+Returns the value of mesh node type set by `.setType()`.
+
 ## start(configs, callback)
 
 Starts mesh network. The function also returns a `Promise` object.
@@ -254,6 +269,19 @@ All messages with the same handler ID will trigger this handler function.
 |:--------------|:------:|:--------|:-------------|
 |handlerId      |YES     |Number   |Unique ID of a handler (Max 0xffff)|
 |handlerFunction|YES     |Function |A function to be executed on the given handler ID|
+
+## prepareNodes(nodeType, nodes)
+
+Returns only valid mesh nodes to be used by `.send()` and `.usend()`.
+
+It requires `nodes` to have the same `type` as `nodeType` given in the first argument.
+
+The main purpose of this method is to automatically replace invalid or dead mesh nodes with their backup nodes.
+
+```javascript
+var preparedNodes = mlink.prepareNodes('MyCustomNodeType', nodes);
+mlink.send(handlerId, preparedNodes, data);
+```
 
 ## send(handlerId, nodes, data, callback)
 

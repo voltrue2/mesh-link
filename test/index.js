@@ -12,13 +12,17 @@ const PORT_ONE = 4100;
 const PORT_TWO = 4101;
 const PORT_THREE = 7102;
 const plist = [];
+// we assume the last one is always the timeout value
+const TIMEOUT = parseInt(process.argv[process.argv.length - 1]) - 1000;
+
+var timer;
 
 describe('mesh-link', () => {
 
     it('Can get back up candidate mesh nodes', () => {
         var me = { address: '127.0.0.1', port: 1234 };
         var backup = require('../lib/backup');
-        backup.setup({ backups: 3 }, me);
+        backup.setup({ backups: { TypeTest: 3 } }, me);
         var nodes = [
             { address: '198.21.1.64', port: 5678 },
             { address: '255.255.255.255', port: 9012 },
@@ -33,8 +37,12 @@ describe('mesh-link', () => {
         for (var k = 0, ken = nodes.length; k < ken; k++) {
             nodes[k].sortKey = backup.addrToNum(nodes[k].address);
         }
-        backup.update(nodes);
-        var res = backup.get(me);
+        backup.update({ TypeTest: nodes });
+        var res = backup.get('TypeTest', me);
+
+        console.log(me);
+        console.log(res);
+
         for (var i = 0, len = res.length; i < len; i++) {
             assert.notEqual(me.address + me.port, res[i].address + res[i].port);
         }
@@ -44,20 +52,24 @@ describe('mesh-link', () => {
     });
 
     it('Can start node "one"', (done) => {
+        startTimer();
         startNode(ONE, PORT_ONE);
-        setTimeout(done, 1000);
+        setTimeout(bindDone(done), 1000);
     });
 
     it('Can start node "two"', (done) => {
+        startTimer();
         startNode(TWO, PORT_TWO);
-        setTimeout(done, 1000);
+        setTimeout(bindDone(done), 1000);
     });
 
     it('Can wait 2000 seconds', (done) => {
-        setTimeout(done, 2000);
+        startTimer();
+        setTimeout(bindDone(done), 2000);
     });
 
     it('Node "one" can send a message to node "two" and receive a response back', (done) => {
+        startTimer();
         runClient('hello2two', PORT_ONE, (buf, next) => {
             try {
                 var data = JSON.parse(buf);
@@ -66,35 +78,40 @@ describe('mesh-link', () => {
                 throw error;
             }
             eq(data.message, 'hello world', next);
-        }, done);
+        }, bindDone(done));
     });
 
     it('Node "one" can send an unreliable message to node "two" and receive a response back', (done) => {
+        startTimer();
         runClient('Uhello2two', PORT_ONE, (buf, next) => {
             var data = JSON.parse(buf);
             eq(data.message, 'hello world', next);
-        }, done);
+        }, bindDone(done));
     });
 
     it('Can start node "three"', (done) => {
+        startTimer();
         startNode(THREE, PORT_THREE);
-        setTimeout(done, 1000);
+        setTimeout(bindDone(done), 1000);
     });
 
     it('Can wait 2000 seconds', (done) => {
-        setTimeout(done, 2000);
+        startTimer();
+        setTimeout(bindDone(done), 2000);
     });
 
     it('Node "two" can create a shared object and see that local and remote are completely in sync', (done) => {
+        startTimer();
         runClient('createSO', PORT_TWO, (buf, next) => {
             var list = JSON.parse(buf);
             var two = list[0];
             var one = list[1];
             eq(two, one, next);
-        }, done);
+        }, bindDone(done));
     });
 
     it('Node "two" can create and update shared object locally and from another node and see that it is in sync', (done) => {
+        startTimer();
         runClient('updateSO', PORT_TWO, (buf, next) => {
             var list = JSON.parse(buf);
             var ctwo = list[0];
@@ -110,14 +127,16 @@ describe('mesh-link', () => {
                     });
                 });
             });
-        }, done);
+        }, bindDone(done));
     });
 
     it('Can wait for 5 seconds', (done) => {
-        setTimeout(done, 5000);
+        startTimer();
+        setTimeout(bindDone(done), 5000);
     });
 
     it('All nodes have no more shared objects b/c they have expired', (done) => {
+        startTimer();
         runClient('noSO', PORT_TWO, (buf, next) => {
             var list = JSON.parse(buf);
             var two = list[0];
@@ -128,10 +147,11 @@ describe('mesh-link', () => {
                     eq(one, three, next);
                 });
             });
-        }, done);
+        }, bindDone(done));
     });
 
     it('Node "three" can send a message to all nodes and receive a response back', (done) => {
+        startTimer();
         var timeout = setTimeout(() => {
             stopAllNodes();
             setTimeout(() => {
@@ -148,10 +168,11 @@ describe('mesh-link', () => {
                 eq(msg, '/foo bar/foo bar/foo bar/foo bar', next);
             }
             clearTimeout(timeout);
-        }, done);
+        }, bindDone(done));
     });
 
     it('Node "three" can send an unreliable message to all nodes and receive a response back', (done) => {
+        startTimer();
         var timeout = setTimeout(() => {
             stopAllNodes();
             setTimeout(() => {
@@ -168,10 +189,11 @@ describe('mesh-link', () => {
                 eq(msg, '/foo bar/foo bar/foo bar/foo bar', next);
             }
             clearTimeout(timeout);
-        }, done);
+        }, bindDone(done));
     });
 
     it('Node "three" can send a relay message to all nodes including a defect node, but all nodes receives the message', (done) => {
+        startTimer();
         var timeout = setTimeout(() => {
             stopAllNodes();
             setTimeout(() => {
@@ -183,34 +205,38 @@ describe('mesh-link', () => {
             var expected = JSON.stringify([ 'GOOD', 'GOOD', 'GOOD' ]);
             eq(msg, expected, next);
             clearTimeout(timeout);
-        }, done);
+        }, bindDone(done));
     });
 
     it('Node "two" can send a message to node "three", but response times out', (done) => {
+        startTimer();
         runClient('responseTimeout', PORT_TWO, (buf, next) => {
             eq(buf.toString(), 'Reliable message response timed out - handler ID: 3 - destination: 127.0.0.1 4002', next);
-        }, done);
+        }, bindDone(done));
     });
 
     it('Node "one" can save data on its backup nodes', (done) => {
+        startTimer();
         runClient('saveOnBackupNodes', PORT_TWO, (buf, next) => {
             var msg = buf.toString();
             eq(msg, 'I have a dream', next);
-        }, done);
+        }, bindDone(done));
     });
 
     it('Node "one" can pause announcement to remove itself from the available mesh node list', (done) => {
+        startTimer();
         runClient('pauseAnnouncementOfOne', PORT_ONE, (buf, next) => {
             var res = JSON.parse(buf);
             eq(res.message, 'AnnouncementPaused', next);
-        }, done);
+        }, bindDone(done));
     });
 
     it('One of the backups of node "one" can return the saved data', (done) => {
+        startTimer();
         runClient('getThingFromBackup', PORT_TWO, (buf, next) => {
             var res = JSON.parse(buf);
             eq(res.thing.message, 'I have a dream', next);
-        }, done);
+        }, bindDone(done));
     });
 
     it('Can stop all nodes', (done) => {
@@ -221,18 +247,19 @@ describe('mesh-link', () => {
     it('Can run performance test on backup', () => {
         var me = { address: '127.0.0.1', port: 1234 };
         var backup = require('../lib/backup');
-        backup.setup({ backups: 3 }, me);
+        backup.setup({ backups: { TypeTest: 3 } }, me);
         var nodes = [ me ];
         var total = 300;
         for (var i = 0; i < total; i++) {
-            nodes.push({ sortKey: backup.addrToNum(i + '.0.0.0'), address: i + '.0.0.0', port: i +1000 });
+            var node = { sortKey: backup.addrToNum(i + '.0.0.0'), address: i + '.0.0.0', port: i +1000 };
+            nodes.push(node);
         }
-        backup.update(nodes);
+        backup.update({ TypeTest: nodes });
         var start = Date.now();
         var res;
         var loop = 100000;
         for (var j = 0; j < loop; j++) {
-            res = backup.get(me);
+            res = backup.get('TypeTest', me);
         }
         var time = Date.now() - start;
         console.log('Calculating backups over', total, 'mesh nodes', loop, 'times took', time + 'ms');
@@ -296,6 +323,26 @@ function runClient(cmd, port, test, done) {
         exclusive: true
     });
     return client;
+}
+
+function startTimer() {
+    timer = setTimeout(() => {
+        stopAllNodes();
+        setTimeout(() => {
+            throw new Error('Test timed out');
+        }, 100 * plist.length);
+    }, TIMEOUT);
+}
+
+function stopTimer() {
+    clearTimeout(timer);
+}
+
+function bindDone(done) {
+    return function _done(error) {
+        stopTimer();
+        done(error);
+    };
 }
 
 function startNode(name, port) {
