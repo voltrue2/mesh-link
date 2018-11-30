@@ -8,6 +8,7 @@ module.exports = {
     info: broker.info,
     onUpdate: broker.onUpdate,
     onUpdated: broker.onUpdated,
+    onNewNodes: broker.onNewNodes,
     setType: broker.setType,
     setValue: broker.setValue,
     nodeExists: broker.nodeExists,

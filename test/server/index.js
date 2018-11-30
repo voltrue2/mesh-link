@@ -132,6 +132,9 @@ function onListening() {
         console.log('----> Get from backup', thingToSave, mlink.info());
         cb({ thing: thingToSave, info: mlink.info() });
     });
+    mlink.onNewNodes((nodes) => {
+        console.log('New mesh nodes detected:', nodes);
+    });
     mlink.setType('TypeTest');
     mlink.start(conf)
         .then(() => {
