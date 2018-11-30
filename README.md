@@ -361,6 +361,18 @@ Returns all values set by `setValue(...)` as an object.
 |address |YES     |String   |IP address of the target mesh node|
 |port    |YES     |Number   |Port of the target mesh node|
 
+## getNodesByType(nodeType)
+
+Returns all mesh nodes of the type given as `nodeType`.
+
+```
+[
+    { address: '0.0.0.0', port: 8100 },
+    { address: '0.0.0.0', port: 8101 },
+    {...}
+]
+```
+
 ## getNodeEndPoints()
 
 Returns all mesh nodes' address and port as an array.
