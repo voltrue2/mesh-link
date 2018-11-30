@@ -10,6 +10,7 @@ module.exports = {
     onUpdated: broker.onUpdated,
     setType: broker.setType,
     setValue: broker.setValue,
+    nodeExists: broker.nodeExists,
     getType: broker.getType,
     getNodesByType: broker.getNodesByType,
     getNodeValue: broker.getNodeValue,
