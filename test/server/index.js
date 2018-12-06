@@ -144,6 +144,7 @@ function onListening() {
         })
         .catch((error) => {
             // failed...
+            console.error(error);
             process.exit(1);
         });
 }

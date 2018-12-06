@@ -1,10 +1,10 @@
 {
     "name": "mesh-link",
-    "version": "0.7.1",
+    "version": "0.8.0",
     "author": "Nobuyori Takahashi",
     "description": "Mesh network for servers that allows your servers(processes) talk to each other",
     "dependencies": {
-        "redis": "2.8.0"
+        "ioredis": "4.2.0"
     },
     "devDependencies": {
         "mocha": "5.2.0",

@@ -84,6 +84,24 @@ var nodes = [
 mlink.send(handlerId, nodes, data);
 ```
 
+## Use Redis Cluster
+
+mesh-link supports Redis Cluster also. In order to connect to Redis Cluster, your configurations follow as shown below:
+
+```
+{
+    redis: {
+        cluster: [
+            { host, port },
+            { host, port}
+            [...]
+        ]
+    }
+}
+``
+
+The `cluster` property must be an array with host and port objects. You do not have to cover all of your cluster nodes, but just a few.
+
 ## How To Set Up A Message Handler
 
 When you send a mesh network message to another mesh node,
