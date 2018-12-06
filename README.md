@@ -70,20 +70,6 @@ mlink.start(configs)
 |port      |NO      |`8100`                                 |Port range to bind. If it is 8100, then it will bind and increment                       |
 |backups   |NO      |                                       |A map by node types to indicate each node type's number of other mesh nodes to be used as potential backup (you need to write your own backup logic)|
 
-## How To Send A Mesh Network Message
-
-```javascript
-const mlink = require('mesh-link');
-var handlerId = 1000;
-var data = { message: 'Hello World!' };
-// mesh nodes to send the message to
-var nodes = [
-    { address: '0.0.0.0', port: 8100 },
-    { address: '0.0.0.0', port: 8101 }
-];
-mlink.send(handlerId, nodes, data);
-```
-
 ## Use Redis Cluster
 
 mesh-link supports Redis Cluster also. In order to connect to Redis Cluster, your configurations follow as shown below:
@@ -101,6 +87,20 @@ mesh-link supports Redis Cluster also. In order to connect to Redis Cluster, you
 ``
 
 The `cluster` property must be an array with host and port objects. You do not have to cover all of your cluster nodes, but just a few.
+
+## How To Send A Mesh Network Message
+
+```javascript
+const mlink = require('mesh-link');
+var handlerId = 1000;
+var data = { message: 'Hello World!' };
+// mesh nodes to send the message to
+var nodes = [
+    { address: '0.0.0.0', port: 8100 },
+    { address: '0.0.0.0', port: 8101 }
+];
+mlink.send(handlerId, nodes, data);
+```
 
 ## How To Set Up A Message Handler
 
