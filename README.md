@@ -72,14 +72,14 @@ mlink.start(configs)
 |port          |NO      |`8100`                                 |Port range to bind. If it is 8100, then it will bind and increment                       |
 |backups       |NO      |                                       |A map by node types to indicate each node type's number of other mesh nodes to be used as potential backup (you need to write your own backup logic)|
 
-## Use Redis Cluster
+## Use Redis Sentinel
 
-mesh-link supports Redis Cluster also. In order to connect to Redis Cluster, your configurations follow as shown below:
+mesh-link supports Redis Sentinel also. In order to connect to Redis Sentinel, your configurations follow as shown below:
 
 ```
 {
     redis: {
-        cluster: [
+        sentinel: [
             { host, port },
             { host, port}
             [...]
@@ -89,6 +89,24 @@ mesh-link supports Redis Cluster also. In order to connect to Redis Cluster, you
 ``
 
 The `cluster` property must be an array with host and port objects. You do not have to cover all of your cluster nodes, but just a few.
+
+## Use Redis Sentiel
+
+mesh-link supports Redis Cluster also. In order to connect to Redis Cluster, your configurations follow as shown below:
+
+```
+{
+    redis: {
+        sentinel: [
+            { host, port },
+            { host, port}
+            [...]
+        ]
+    }
+}
+``
+
+The `sentinel` property must be an array with host and port objects. You do not have to cover all of your sentinel nodes, but just a few.
 
 ## How To Send A Mesh Network Message
 
