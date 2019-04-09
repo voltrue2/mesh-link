@@ -321,7 +321,7 @@ var preparedNodes = mlink.prepareNodes('MyCustomNodeType', nodes);
 mlink.send(handlerId, preparedNodes, data);
 ```
 
-## send(handlerId, nodes, data, callback)
+## send(handlerId, nodes, data, callback, options)
 
 Sends a mesh network message with a handler ID to one or more mesh network nodes.
 
@@ -335,8 +335,9 @@ If `callback` is given, it is understood to require a response back.
 |nodes          |YES     |Array    |An array of mesh nodes' address and port to send the message to|
 |data           |YES     |Object   |Message as an object to be sent|
 |callback       |NO      |Function |Provid the callback function if you require a response back|
+|options.limit  |NO      |Number   |Overwrites configuration relayLimit|
 
-## usend(handlerId, nodes, data, callback)
+## usend(handlerId, nodes, data, callback, options)
 
 Sends an unreliable mesh network message with a handler ID to one or more mesh network nodes.
 
@@ -352,6 +353,7 @@ The advantage of using this method is message size is much smaller than that of 
 |nodes          |YES     |Array    |An array of mesh nodes' address and port to send the message to|
 |data           |YES     |Object   |Message as an object to be sent|
 |callback       |NO      |Function |Provid the callback function if you require a response back|
+|options.limit  |NO      |Number   |Overwrites configuration relayLimit|
 
 ## onUpdate(handler)
 
