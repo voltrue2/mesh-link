@@ -72,6 +72,17 @@ mlink.start(configs)
 |port          |NO      |`8100`                                 |Port range to bind. If it is 8100, then it will bind and increment                       |
 |backups       |NO      |                                       |A map by node types to indicate each node type's number of other mesh nodes to be used as potential backup (you need to write your own backup logic)|
 
+### Master-Slave Redis Configurations
+
+If you are connecting to master-slave setup, you need to use the following configurations instead of `redis { host, port }` property:
+
+**NOTE** If you want to have multiple slave Redis servers, you need to have a load balancer over the slave redis servers.
+
+|redis.multi.master.host|
+|redis.multi.master.port|
+|redis.multi.slave.host |
+|redis.multi.slave.port |
+
 ## Use Redis Sentinel
 
 mesh-link supports Redis Sentinel also. In order to connect to Redis Sentinel, your configurations follow as shown below:
