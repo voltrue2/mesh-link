@@ -93,6 +93,12 @@ function onListening() {
     });
     // set up mesh-link
     var conf = {
+        redis: {
+            multi: {
+                master: { host: '127.0.0.1', port: 6379 },
+                slave: { host: 'localhost', port: 6379 }
+            }
+        },
         backups: {
             TypeTest: 3,
         },
