@@ -108,6 +108,7 @@ function onListening() {
         },
         cleanInterval: 1000,
         nic: 'eth0',
+        strict: false,
         address: '127.0.0.1',
         port: 4000,
         prefix: '__test__',
