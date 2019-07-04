@@ -298,6 +298,10 @@ Stops mesh network. The function also returns a `Promise` object.
 |:-------|:------:|:--------|:-------------|
 |callback|NO      |Function |Callback function, if you are not using Promise, this is required|
 
+## setSplitSize(splitSize)
+
+You may change the maximum byte size threshold for each mesh network message to be split into multiple messages.
+
 ## info()
 
 Returns the IP address and port number that this mesh network node uses as an object.
