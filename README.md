@@ -46,7 +46,8 @@ var configs = {
     updateInterval: 1000,
     relayLimit: 1,
     relayDelay: 0,
-    prefix: 'myapp'
+    prefix: 'myapp',
+    strict: false
 };
 mlink.start(configs)
     .then(() => {
@@ -71,6 +72,7 @@ mlink.start(configs)
 |address       |NO      |Dynamically obtained private IP address|IP address to bind. It uses `eth0` by default. To change this, you must set `nic` to something else|
 |port          |NO      |`8100`                                 |Port range to bind. If it is 8100, then it will bind and increment                       |
 |backups       |NO      |                                       |A map by node types to indicate each node type's number of other mesh nodes to be used as potential backup (you need to write your own backup logic)|
+|strict        |NO      |true                                   |If `true` and `nic` is given, but not found, mesh-link will throw an exception at start  |
 
 ### Master-Slave Redis Configurations
 
