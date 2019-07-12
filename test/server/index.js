@@ -106,6 +106,7 @@ function onListening() {
         backups: {
             TypeTest: 3,
         },
+        useSharedObject: true,
         cleanInterval: 1000,
         nic: 'eth0',
         strict: false,
