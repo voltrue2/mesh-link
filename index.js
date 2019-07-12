@@ -17,6 +17,7 @@ module.exports = {
     getNodeValue: broker.getNodeValue,
     getNodeEndPoints: broker.getNodeEndPoints,
     getBackupNodes: broker.getBackupNodes,
+    getNodes: broker.getNodes,
     handler: broker.handler,
     prepareNodes: broker.prepareNodes,
     send: broker.send,

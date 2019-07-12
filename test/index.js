@@ -198,7 +198,7 @@ describe('mesh-link', () => {
             stopAllNodes();
             setTimeout(() => {
                 throw new Error('Time Out...');
-            }, 100 * plist.length);
+            }, 1000 * plist.length);
         }, 5000);
         runClient('relayWithOneDefectNode', PORT_THREE, (buf, next) => {
             var msg = buf.toString();
