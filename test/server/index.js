@@ -112,7 +112,7 @@ function onListening() {
         backups: {
             TypeTest: 3,
         },
-        useHash: true,
+        useHash: false,
         useSharedObject: true,
         cleanInterval: 1000,
         nic: 'eth0',
