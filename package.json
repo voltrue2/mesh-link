@@ -1,6 +1,6 @@
 {
     "name": "mesh-link",
-    "version": "0.11.7",
+    "version": "0.11.8",
     "author": "Nobuyori Takahashi",
     "description": "Mesh network for servers that allows your servers(processes) talk to each other",
     "dependencies": {
