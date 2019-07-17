@@ -16,6 +16,12 @@ var remember;
 var thingToSave;
 var cachedNodes = {};
 
+process.on('SIGINT', () => {
+    mlink.stop(() => {
+        process.exit(0);
+    });
+});
+
 mlink.onLogging((level, args) => {
     console.log.apply(console, args);
 });
@@ -106,6 +112,7 @@ function onListening() {
         backups: {
             TypeTest: 3,
         },
+        useHash: true,
         useSharedObject: true,
         cleanInterval: 1000,
         nic: 'eth0',
