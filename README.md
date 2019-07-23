@@ -169,7 +169,11 @@ var data = { message: 'foobar' };
 var nodes = [
     { address: '0.0.0.0', port: 8100 }
 ];
-mlink.send(handlerId, nodes, data, (responseData) => {
+mlink.send(handlerId, nodes, data, (error, responseData) => {
+    if (error) {
+        console.log('error occur: ' + error.message);
+        return;
+    }
     console.log(responseData.message, 'response took', Date.now() - responseData.time, 'milliseconds');
 });
 ```
