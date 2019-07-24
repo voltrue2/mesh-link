@@ -150,6 +150,11 @@ function onListening() {
         console.log('----> Get from backup', thingToSave, mlink.info());
         cb({ thing: thingToSave, info: mlink.info() });
     });
+    // getSender
+    mlink.handler(12, function (nothing, cb) {
+        console.log(JSON.stringify(this));
+        cb(this.sender);
+    });
     mlink.onNewNodes((nodes) => {
         console.log('New mesh nodes detected:', nodes);
     });
@@ -447,6 +452,19 @@ function onMessage(buf, remote) {
                 server.send(buf, 0, buf.length, remote.port, remote.address);
             });
         break;
+        case 'getSender':
+            var node = getNodeByName('one');
+            mlink.send(12, [node], {}, (error, res) => {
+                if (error) {
+                    console.error('getSender receive error', error.message);
+                    var err = Buffer.from(error.message);
+                    server.send(err, 0, err.length, remote.port, remote.address);
+                    return;
+                }
+                var buf = Buffer.from(JSON.stringify(res));
+                server.send(buf, 0, buf.length, remote.port, remote.address);
+            });
+            break;
     }
 }
 

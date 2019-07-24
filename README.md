@@ -188,6 +188,19 @@ function message200Handler(data, callback) {
 }
 ```
 
+## How To Get A Sender Information
+
+```javascript
+const mlink = require('mesh-link');
+var handlerId = 3000;
+mlink.handler(handlerId, message3000Handler);
+
+function message3000Handler() {
+    // You can get sender information using this.sender
+    console.log('Message from: ' + this.sender.address + ':' + this.sender.port);
+}
+```
+
 # Shared Objects
 
 A shared object is an object that can be shared and mutated from all mesh nodes asynchronously, and the object remains synchronized across all mesh nodes.
