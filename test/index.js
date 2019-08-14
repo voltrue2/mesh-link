@@ -215,6 +215,28 @@ describe('mesh-link', () => {
         }, bindDone(done));
     });
 
+    it('Node "one" handler can get sender info from node "three" client', (done) => {
+        runClient('getSender', PORT_THREE, (buf, next) => {
+            var res = JSON.parse(buf);
+            eq(res.address, ADDR, () => {
+                eq(res.port, 4002, () => {
+                    eq(res.isLocal, false, next);
+                });
+            });
+        }, bindDone(done));
+    });
+
+    it('Node "one" handler can get sender info from node "one" client', (done) => {
+        runClient('getSender', PORT_ONE, (buf, next) => {
+            var res = JSON.parse(buf);
+            eq(res.address, ADDR, () => {
+                eq(res.port, 4000, () => {
+                    eq(res.isLocal, true, next);
+                });
+            });
+        }, bindDone(done));
+    });
+
     it('Node "one" can save data on its backup nodes', (done) => {
         startTimer();
         runClient('saveOnBackupNodes', PORT_TWO, (buf, next) => {
