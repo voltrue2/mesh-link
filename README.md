@@ -74,7 +74,6 @@ mlink.start(configs)
 |backups       |NO      |                                       |A map by node types to indicate each node type's number of other mesh nodes to be used as potential backup (you need to write your own backup logic)|
 |sendInterval  |NO      |0                                      |If greater than 0, all messages will be "batched" at given interval in milliseconds to be sent|
 |strict        |NO      |true                                   |If `true` and `nic` is given, but not found, mesh-link will throw an exception at start  |
-|useHash       |NO      |false                                  |If `true`, each mesh node does not update its internal cache of other nodes unless the number of nodes change|
 
 ### Master-Slave Redis Configurations
 
