@@ -24,6 +24,7 @@ describe('mesh-link', () => {
         var backup = require('../lib/backup');
         backup.setup({ backups: { TypeTest: 3 } }, me);
         var nodes = [
+            me,
             { address: '198.21.1.64', port: 5678 },
             { address: '255.255.255.255', port: 9012 },
             { address: '127.0.0.1', port: 3456 },
@@ -34,9 +35,6 @@ describe('mesh-link', () => {
             { address: '192.44.1.53', prt: 3456 },
             { address: '198.21.1.61', port: 7890 }
         ];
-        for (var k = 0, ken = nodes.length; k < ken; k++) {
-            nodes[k].sortKey = backup.addrToNum(nodes[k].address);
-        }
         backup.update({ TypeTest: nodes });
         var res = backup.get('TypeTest', me);
 
@@ -46,9 +44,20 @@ describe('mesh-link', () => {
         for (var i = 0, len = res.length; i < len; i++) {
             assert.notEqual(me.address + me.port, res[i].address + res[i].port);
         }
-        assert.equal(res[0].address + res[0].port, nodes[2].address + nodes[2].port);
-        assert.equal(res[1].address + res[1].port, nodes[4].address + nodes[4].port);
-        assert.equal(res[2].address + res[2].port, nodes[8].address + nodes[8].port);
+        // mimic losing one of the backup node
+        var nodes2 = [];
+        for (var j = 0, len2 = nodes.length; j < len2; j++) {
+            if (res[0].address === nodes[i].address && res[0].port === nodes[i].port) {
+                continue;
+            }
+            nodes2.push(nodes[i]);
+        }
+        backup.update({ TypeTest: nodes2 });
+        var res2 = backup.get('TypeTest', me);
+        console.log('--->', res2);
+        assert.equal(res[0].address + res[0].port, res2[0].address + res2[0].port);
+        assert.equal(res[1].address + res[1].port, res2[1].address + res2[1].port);
+        assert.equal(res[2].address + res[2].port, res2[2].address + res2[2].port);
     });
 
     it('Can start node "one"', (done) => {
@@ -271,10 +280,12 @@ describe('mesh-link', () => {
         var backup = require('../lib/backup');
         backup.setup({ backups: { TypeTest: 3 } }, me);
         var nodes = [ me ];
+        var nodes2 = [];
         var total = 300;
         for (var i = 0; i < total; i++) {
-            var node = { sortKey: backup.addrToNum(i + '.0.0.0'), address: i + '.0.0.0', port: i +1000 };
+            var node = { address: i + '.0.0.0', port: i +1000 };
             nodes.push(node);
+            nodes2.push(node);
         }
         backup.update({ TypeTest: nodes });
         var start = Date.now();
@@ -286,11 +297,13 @@ describe('mesh-link', () => {
         var time = Date.now() - start;
         console.log('Calculating backups over', total, 'mesh nodes', loop, 'times took', time + 'ms');
         for (var i = 0, len = res.length; i < len; i++) {
-            assert.notEqual(me.address, res[i].address);
+            assert.notEqual(me.address + me.port, res[i].address + res[i].port);
         }
-        assert.equal(res[0].address, nodes[129].address);
-        assert.equal(res[1].address, nodes[128].address);
-        assert.equal(res[2].address, nodes[130].address);
+        backup.update({ TypeTest: nodes2 });
+        var res2 = backup.get('TypeTest', me);
+        assert.equal(res[0].address, res2[0].address);
+        assert.equal(res[1].address, res2[1].address);
+        assert.equal(res[2].address, res2[2].address);
     });
 
 });
