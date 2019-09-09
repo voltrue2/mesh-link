@@ -136,18 +136,18 @@ function onListening() {
     mlink.handler(9, (_thingToSave, cb) => {
         thingToSave = _thingToSave;
         var backups = mlink.getBackupNodes();
-        console.log('----> Save on backups also:', thingToSave, backups);
+        console.log('----> Save on backups also:', thingToSave, backups, PORT);
         mlink.send(10, backups, thingToSave);
         cb();
     });
     // saveOnBackupNodes
     mlink.handler(10, (_thingToSave) => {
         thingToSave = _thingToSave;
-        console.log('----> Backup save:', thingToSave, mlink.info());
+        console.log('----> Backup save:', thingToSave, mlink.info(), PORT);
     });
     // getThingFromBackup
     mlink.handler(11, (nothing, cb) => {
-        console.log('----> Get from backup', thingToSave, mlink.info());
+        console.log('----> Get from backup', thingToSave, mlink.info(), PORT);
         cb({ thing: thingToSave, info: mlink.info() });
     });
     // getSender

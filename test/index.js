@@ -223,7 +223,7 @@ describe('mesh-link', () => {
 
     it('One of the backups of node "one" can return the saved data', (done) => {
         startTimer();
-        runClient('getThingFromBackup', PORT_TWO, (buf, next) => {
+        runClient('getThingFromBackup', PORT_ONE, (buf, next) => {
             var res = JSON.parse(buf);
             eq(res.thing.message, 'I have a dream', next);
         }, bindDone(done));
