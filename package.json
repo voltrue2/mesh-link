@@ -4,7 +4,7 @@
     "author": "Nobuyori Takahashi",
     "description": "Mesh network for servers that allows your servers(processes) talk to each other",
     "dependencies": {
-        "ioredis": "4.2.0"
+        "ioredis": "4.27.8"
     },
     "devDependencies": {
         "mocha": "5.2.0",
